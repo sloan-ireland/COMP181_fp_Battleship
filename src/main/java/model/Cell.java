@@ -2,8 +2,8 @@ package model;
 
 
 public abstract class Cell {
-    private int xCoord;
-    private int yCoord;
+    public int xCoord;
+    public int yCoord;
 
 
     //accesor and mutator methods
