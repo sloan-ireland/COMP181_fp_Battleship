@@ -5,4 +5,6 @@ module controller.comp181_fp_battleship {
 
     opens controller to javafx.fxml;
     exports controller;
+    exports view;
+    opens view to javafx.fxml;
 }
