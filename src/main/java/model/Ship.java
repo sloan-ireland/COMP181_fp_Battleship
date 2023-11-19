@@ -2,11 +2,11 @@ package model;
 
 public abstract class Ship {
 
-    private int health;
-    private int length;
+    protected int health = 100;
+    protected int length;
     public ShipCell[] shipCells;
-    private boolean isSunk;
-    private String name;
+    protected boolean isSunk;
+    public String name;
 
     public Ship() {
 
@@ -34,5 +34,9 @@ public abstract class Ship {
 
     public void setShipCells(ShipCell[] shipCells) {
         this.shipCells = shipCells;
+    }
+
+    public String getName() {
+        return name;
     }
 }

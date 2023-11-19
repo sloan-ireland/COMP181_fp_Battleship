@@ -33,7 +33,7 @@ public class StartController {
 
     void onHelloButtonClick() {
         welcomeText.setText("Game Starting...");
-        GameWindow.displayGameWindow();
+        GameWindow.displaySetupWindow();
     }
 
     public Label getWelcomeText() {
