@@ -1,8 +1,8 @@
 package controller;
 import model.*;
 public class Game {
-    Player player1;
-    Player player2;
+    public static Player player1;
+    public static Player player2;
 
 
 }

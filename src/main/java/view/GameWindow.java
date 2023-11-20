@@ -1,5 +1,6 @@
 package view;
 
+import controller.Game;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -10,11 +11,12 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
+import model.Player;
 import model.Ship; // Import your Ship class
 
 public class GameWindow {
 
-    public static void displaySetupWindow() {
+    public static void playerSetup(int playerNumber) {
         Stage setupStage = new Stage();
         setupStage.setTitle("Setup Your Board");
 
@@ -28,6 +30,17 @@ public class GameWindow {
         VBox inputBox = new VBox(10, playerNameField, submitButton);
         inputBox.setAlignment(Pos.CENTER);
 
+        // Event handling for submit button
+        submitButton.setOnAction(e -> {
+            String playerName = playerNameField.getText();
+            if (playerNumber == 1) {
+                Game.player1 = new Player(playerName);
+            } else {
+                Game.player2 = new Player(playerName);
+            }
+            // TODO: Handle player name and board setup
+        });
+
         // Game board
         GridPane gameBoard = createBoard();
         root.setCenter(gameBoard);
@@ -39,8 +52,8 @@ public class GameWindow {
         VBox shipList = new VBox(10);
         shipList.setAlignment(Pos.CENTER);
 
-        // Assuming you have specific ship classes like Battleship, Cruiser, etc.
-        Ship[] ships = {/* Instantiate your ship objects here */};
+
+        Ship ships[] = {new model.Carrier(), new model.Battleship(), new model.Cruiser(), new model.Submarine(), new model.Destroyer()};
 
         for (Ship ship : ships) {
             Label shipLabel = new Label(ship.getName() + " (Length: " + ship.getLength() + ")");
@@ -65,11 +78,7 @@ public class GameWindow {
         setupStage.setScene(scene);
         setupStage.show();
 
-        // Event handling for submit button
-        submitButton.setOnAction(e -> {
-            String playerName = playerNameField.getText();
-            // TODO: Handle player name and board setup
-        });
+
     }
 
     private static GridPane createBoard() {
