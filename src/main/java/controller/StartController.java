@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import view.*;
+import javafx.stage.Stage;
 
 
 public class StartController {
@@ -34,7 +35,12 @@ public class StartController {
     void onHelloButtonClick() {
         welcomeText.setText("Game Starting...");
         GameWindow.displaySetupWindow();
+
+        // Close the current stage
+        Stage currentStage = (Stage) startButton.getScene().getWindow();
+        currentStage.close();
     }
+
 
     public Label getWelcomeText() {
         return welcomeText;

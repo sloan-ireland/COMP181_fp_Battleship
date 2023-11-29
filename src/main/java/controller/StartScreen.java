@@ -2,11 +2,13 @@ package controller;
 
 import javafx.application.Application;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class StartScreen extends Application {
+
 
     @Override
     public void start(Stage stage) {
