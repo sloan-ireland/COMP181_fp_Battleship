@@ -17,4 +17,24 @@ public class Board {
 
     }
 
+
+    private Cell[][] board;
+    private int shipCount; //track the number of ships
+
+    public Board() {
+        // Initialize board and shipCount
+    }
+
+    // Method to decrease ship count
+    public void decreaseShipCount() {
+        if (shipCount > 0) {
+            shipCount--;
+        }
+    }
+
+    // Method to check if all ships are destroyed
+    public boolean areAllShipsDestroyed() {
+        return shipCount == 0;
+    }
+
 }
