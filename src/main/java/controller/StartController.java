@@ -34,7 +34,7 @@ public class StartController {
 
     void onHelloButtonClick() {
         welcomeText.setText("Game Starting...");
-        GameWindow.displaySetupWindow();
+        ShipInput.displaySetupWindow();
 
         // Close the current stage
         Stage currentStage = (Stage) startButton.getScene().getWindow();

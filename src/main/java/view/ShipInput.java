@@ -12,13 +12,14 @@ import model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameWindow {
+public class ShipInput {
 
     private static Label playerNameLabel;
     private static GridPane gameBoard;
     private static VBox shipList;
     private static Ship[] ships;
-    private static Player currentPlayer;
+
+    private static String playerName;
     private static int currentShipIndex = -1;
     private static List<Button> selectedButtons = new ArrayList<>();
     private static List<Label> shipLabels = new ArrayList<>();
@@ -44,8 +45,7 @@ public class GameWindow {
 
         // Event handling for submit button
         submitButton.setOnAction(e -> {
-            String playerName = playerNameField.getText();
-            currentPlayer = new Player(playerName);
+            playerName = playerNameField.getText();
             setupStage.close();
             setupBoardAndShips();
         });
@@ -59,7 +59,8 @@ public class GameWindow {
         BorderPane root = new BorderPane();
 
         // Stage 2: Display Player Name and Board
-        playerNameLabel = new Label("Player: " + currentPlayer.getName());
+        playerNameLabel = new Label("Player: " + playerName);
+        PlayerOne.setName(playerName);
         root.setTop(playerNameLabel);
 
         gameBoard = createBoard();
