@@ -9,9 +9,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import model.*;
+import controller.InitializeGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Comparator;
+
 
 public class ShipInput {
 
@@ -166,32 +169,40 @@ public class ShipInput {
     }
 
     private static boolean areCellsInLine(List<Button> buttons) {
-        // Check if all cells are in a line
-        boolean areInLine = true;
-        Button firstButton = buttons.get(0);
-        Button secondButton = buttons.get(1);
-        // Check if all cells are in the same row
-        if (firstButton.getLayoutY() == secondButton.getLayoutY()) {
-            // Check if all cells are in the same column
-            for (int i = 2; i < buttons.size(); i++) {
-                if (buttons.get(i).getLayoutY() != firstButton.getLayoutY()) {
-                    areInLine = false;
-                    break;
-                }
-            }
-        } else if (firstButton.getLayoutX() == secondButton.getLayoutX()) {
-            // Check if all cells are in the same row
-            for (int i = 2; i < buttons.size(); i++) {
-                if (buttons.get(i).getLayoutX() != firstButton.getLayoutX()) {
-                    areInLine = false;
-                    break;
-                }
-            }
-        } else {
-            areInLine = false;
+        if (buttons.size() <= 1) {
+            return true; // Only one cell selected, no need to check further
         }
-        return areInLine;
+
+        // Sort buttons by row and then by column
+        buttons.sort(Comparator.comparingInt(b -> GridPane.getRowIndex(b) * 10 + GridPane.getColumnIndex(b)));
+
+        boolean sameRow = true, sameCol = true;
+        int prevRow = GridPane.getRowIndex(buttons.get(0));
+        int prevCol = GridPane.getColumnIndex(buttons.get(0));
+
+        for (int i = 1; i < buttons.size(); i++) {
+            int currentRow = GridPane.getRowIndex(buttons.get(i));
+            int currentCol = GridPane.getColumnIndex(buttons.get(i));
+
+            if (currentRow != prevRow) {
+                sameRow = false;
+            }
+            if (currentCol != prevCol) {
+                sameCol = false;
+            }
+
+            // Check for consecutive placement
+            if ((sameRow && currentCol != prevCol + 1) || (sameCol && currentRow != prevRow + 1)) {
+                return false; // Cells are not consecutively placed
+            }
+
+            prevRow = currentRow;
+            prevCol = currentCol;
+        }
+
+        return sameRow || sameCol; // Cells are in a line if they are in the same row or column
     }
+
     private static String getColorForShip(Ship ship) {
         if (ship instanceof model.Carrier) {
             return "#0077be"; // Dark Blue
@@ -206,7 +217,6 @@ public class ShipInput {
         }
         return "#808080"; // Default Grey
     }
-
 
 
     private static void confirmShipPlacement() {
@@ -226,13 +236,18 @@ public class ShipInput {
                     button.setStyle("-fx-background-color: " + shipColor + ";");
                     button.setDisable(true); // Disable the button after placing the ship
 
-                    // Store the coordinates in the temporary array
+                    // Store the coordinates in the ship's coordinate list
                     int row = GridPane.getRowIndex(button);
                     int col = GridPane.getColumnIndex(button);
                     ships[currentShipIndex].coordinates.add(new int[]{col, row});
                 }
                 shipLabels.get(currentShipIndex).setStyle("-fx-border-color: black; -fx-padding: 5px; -fx-text-fill: grey;");
                 shipLabels.get(currentShipIndex).setDisable(true);
+
+                // Check if all ships have been placed
+                if (allShipsPlaced()) {
+                    endSetup();
+                }
             } else {
                 for (Button button : selectedButtons) {
                     button.setStyle(""); // Reset style if cancelled
@@ -243,7 +258,20 @@ public class ShipInput {
         });
     }
 
+    private static boolean allShipsPlaced() {
+        for (Label label : shipLabels) {
+            if (!label.isDisabled()) {
+                return false; // If any ship label is not disabled, not all ships are placed
+            }
+        }
+        return true; // All ship labels are disabled, meaning all ships are placed
+    }
 
+    private static void endSetup() {
+        PlayerOne.getShipBoard().setShips(ships);
+        InitializeGame.initializeBoard();
 
-    // ... [other methods if any]
+        //Game.printOutShipCoords();
+    }
+
 }

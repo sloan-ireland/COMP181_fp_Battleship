@@ -27,6 +27,6 @@ public class StartScreen extends Application {
 
     public static void main(String[] args) {
         launch(args);
-        Game.printOutShipCoords();
+        //Game.printOutShipCoords();
     }
 }
