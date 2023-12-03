@@ -1,5 +1,6 @@
 package view;
 
+import controller.Game;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
@@ -17,13 +18,16 @@ public class ShipInput {
     private static Label playerNameLabel;
     private static GridPane gameBoard;
     private static VBox shipList;
-    private static Ship[] ships;
+    public static Ship[] ships;
 
     private static String playerName;
     private static int currentShipIndex = -1;
     private static List<Button> selectedButtons = new ArrayList<>();
     private static List<Label> shipLabels = new ArrayList<>();
     private static boolean isPlacingShip = false;
+
+    public static List<int[]> shipCoordinates = new ArrayList<>();
+
 
     public static void displaySetupWindow() {
         Stage setupStage = new Stage();
@@ -101,21 +105,36 @@ public class ShipInput {
     private static GridPane createBoard() {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
-        grid.setHgap(10);
-        grid.setVgap(10);
-        // Add buttons to represent cells
+        grid.setHgap(5); // Reduced horizontal gap
+        grid.setVgap(5); // Reduced vertical gap
+
+        // Adding X-axis labels (Column Headers)
+        for (int col = 0; col < 10; col++) {
+            Label colLabel = new Label(Integer.toString(col));
+            grid.add(colLabel, col + 1, 0); // Offset by 1 to account for Y-axis labels
+        }
+
+        // Adding Y-axis labels (Row Headers)
+        for (int row = 0; row < 10; row++) {
+            Label rowLabel = new Label(Integer.toString(row));
+            grid.add(rowLabel, 0, row + 1); // Offset by 1 to account for X-axis labels
+        }
+
+        // Adding buttons for the board cells
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 Button cell = new Button();
-                cell.setPrefSize(30, 30);
-                grid.add(cell, col, row);
+                cell.setPrefSize(30, 30); // Adjust size as needed
+                grid.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
                 int finalRow = row;
                 int finalCol = col;
                 cell.setOnAction(e -> handleCellClick(finalRow, finalCol, cell));
             }
         }
+
         return grid;
     }
+
 
     private static void handleCellClick(int row, int col, Button cell) {
         if (isPlacingShip && currentShipIndex < ships.length && currentShipIndex >= 0) {
@@ -206,6 +225,11 @@ public class ShipInput {
                 for (Button button : selectedButtons) {
                     button.setStyle("-fx-background-color: " + shipColor + ";");
                     button.setDisable(true); // Disable the button after placing the ship
+
+                    // Store the coordinates in the temporary array
+                    int row = GridPane.getRowIndex(button);
+                    int col = GridPane.getColumnIndex(button);
+                    ships[currentShipIndex].coordinates.add(new int[]{col, row});
                 }
                 shipLabels.get(currentShipIndex).setStyle("-fx-border-color: black; -fx-padding: 5px; -fx-text-fill: grey;");
                 shipLabels.get(currentShipIndex).setDisable(true);
@@ -218,6 +242,7 @@ public class ShipInput {
             isPlacingShip = false;
         });
     }
+
 
 
     // ... [other methods if any]
