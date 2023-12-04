@@ -2,7 +2,7 @@ package model;
 
 public class PlayerOne {
     private static String name;
-    private static ShipBoard shipBoard;
+    private static ShipBoard shipBoard = new ShipBoard();
     private static AttackBoard attackBoard;
 
     public PlayerOne() {

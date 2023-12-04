@@ -237,9 +237,9 @@ public class ShipInput {
                     button.setDisable(true); // Disable the button after placing the ship
 
                     // Store the coordinates in the ship's coordinate list
-                    int row = GridPane.getRowIndex(button);
-                    int col = GridPane.getColumnIndex(button);
-                    ships[currentShipIndex].coordinates.add(new int[]{col, row});
+                    int row = GridPane.getRowIndex(button)-1;
+                    int col = GridPane.getColumnIndex(button)-1;
+                    ships[currentShipIndex].getCoordinates().add(new int[]{col, row});
                 }
                 shipLabels.get(currentShipIndex).setStyle("-fx-border-color: black; -fx-padding: 5px; -fx-text-fill: grey;");
                 shipLabels.get(currentShipIndex).setDisable(true);
@@ -258,6 +258,7 @@ public class ShipInput {
         });
     }
 
+
     private static boolean allShipsPlaced() {
         for (Label label : shipLabels) {
             if (!label.isDisabled()) {
@@ -269,9 +270,10 @@ public class ShipInput {
 
     private static void endSetup() {
         PlayerOne.getShipBoard().setShips(ships);
-        InitializeGame.initializeBoard();
+        InitializeGame.initializeShipBoard();
 
         //Game.printOutShipCoords();
+        Game.printOutShipCoords(PlayerOne.getShipBoard());
     }
 
 }
