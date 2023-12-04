@@ -26,7 +26,17 @@ public class ShipBoard extends Board {
         return ships;
     }
 
+    public Ship getShip(String name) {
+        for (Ship ship : ships) {
+            if (ship.getName().equals(name)) {
+                return ship;
+            }
+        }
+        return null;
+    }
+
     public void setShips(Ship[] ships) {
         this.ships = ships;
     }
+
 }

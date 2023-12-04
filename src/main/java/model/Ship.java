@@ -1,10 +1,11 @@
 package model;
+import java.util.ArrayList;
 
 public abstract class Ship {
 
     protected int health = 100;
     protected int length;
-    public ShipCell[] shipCells;
+    public ArrayList<int[]> coordinates = new ArrayList<>();
     protected boolean isSunk;
     public String name;
 
@@ -28,14 +29,13 @@ public abstract class Ship {
         this.length = length;
     }
 
-    public ShipCell[] getShipCells() {
-        return shipCells;
+    public ArrayList<int[]> getCoordinates() {
+        return coordinates;
     }
 
-    public void setShipCells(ShipCell[] shipCells) {
-        this.shipCells = shipCells;
+    public void setCoordinates(ArrayList<int[]> coordinates) {
+        this.coordinates = coordinates;
     }
-
     public String getName() {
         return name;
     }
