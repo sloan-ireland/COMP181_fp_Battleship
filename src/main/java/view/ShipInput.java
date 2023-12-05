@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import model.*;
 import controller.InitializeGame;
+import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,6 @@ import java.util.Comparator;
 public class ShipInput {
 
     private static Label playerNameLabel;
-    private static GridPane gameBoard;
     private static VBox shipList;
     public static Ship[] ships;
 
@@ -70,8 +70,13 @@ public class ShipInput {
         PlayerOne.setName(playerName);
         root.setTop(playerNameLabel);
 
-        gameBoard = createBoard();
-        root.setCenter(gameBoard);
+        BoardView.setPlayerOneBoardAction(e -> {
+            int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
+            int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
+            handleCellClick(row, col, (Button) e.getSource());
+        });
+        root.setCenter(BoardView.getPlayerOneBoard());
+
 
         shipList = new VBox(10);
         shipList.setAlignment(Pos.CENTER);
@@ -271,9 +276,9 @@ public class ShipInput {
     private static void endSetup() {
         PlayerOne.getShipBoard().setShips(ships);
         InitializeGame.initializeShipBoard();
-
+        //MovementInput.displayMovementWindow();
         //Game.printOutShipCoords();
         Game.printOutShipCoords(PlayerOne.getShipBoard());
     }
-
+    
 }
