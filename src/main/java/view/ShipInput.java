@@ -110,40 +110,6 @@ public class ShipInput {
         }
     }
 
-    private static GridPane createBoard() {
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.setHgap(5); // Reduced horizontal gap
-        grid.setVgap(5); // Reduced vertical gap
-
-        // Adding X-axis labels (Column Headers)
-        for (int col = 0; col < 10; col++) {
-            Label colLabel = new Label(Integer.toString(col));
-            grid.add(colLabel, col + 1, 0); // Offset by 1 to account for Y-axis labels
-        }
-
-        // Adding Y-axis labels (Row Headers)
-        for (int row = 0; row < 10; row++) {
-            Label rowLabel = new Label(Integer.toString(row));
-            grid.add(rowLabel, 0, row + 1); // Offset by 1 to account for X-axis labels
-        }
-
-        // Adding buttons for the board cells
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
-                Button cell = new Button();
-                cell.setPrefSize(30, 30); // Adjust size as needed
-                grid.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
-                int finalRow = row;
-                int finalCol = col;
-                cell.setOnAction(e -> handleCellClick(finalRow, finalCol, cell));
-            }
-        }
-
-        return grid;
-    }
-
-
     private static void handleCellClick(int row, int col, Button cell) {
         if (isPlacingShip && currentShipIndex < ships.length && currentShipIndex >= 0) {
             Ship currentShip = ships[currentShipIndex];
@@ -208,21 +174,6 @@ public class ShipInput {
         return sameRow || sameCol; // Cells are in a line if they are in the same row or column
     }
 
-    private static String getColorForShip(Ship ship) {
-        if (ship instanceof model.Carrier) {
-            return "#0077be"; // Dark Blue
-        } else if (ship instanceof model.Battleship) {
-            return "#228b22"; // Forest Green
-        } else if (ship instanceof model.Cruiser) {
-            return "#b8860b"; // Dark Goldenrod
-        } else if (ship instanceof model.Submarine) {
-            return "#cd5c5c"; // Indian Red
-        } else if (ship instanceof model.Destroyer) {
-            return "#8a2be2"; // Blue Violet
-        }
-        return "#808080"; // Default Grey
-    }
-
 
     private static void confirmShipPlacement() {
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -236,7 +187,7 @@ public class ShipInput {
 
         confirmationAlert.showAndWait().ifPresent(response -> {
             if (response == confirmButton) {
-                String shipColor = getColorForShip(ships[currentShipIndex]);
+                String shipColor = BoardView.getColorForShip(ships[currentShipIndex]);
                 for (Button button : selectedButtons) {
                     button.setStyle("-fx-background-color: " + shipColor + ";");
                     button.setDisable(true); // Disable the button after placing the ship
@@ -280,5 +231,4 @@ public class ShipInput {
         //Game.printOutShipCoords();
         Game.printOutShipCoords(PlayerOne.getShipBoard());
     }
-    
 }

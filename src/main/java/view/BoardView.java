@@ -6,6 +6,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import model.Ship;
 
 public class BoardView {
     public static GridPane playerOneShipBoard = createBoard(null);
@@ -41,6 +42,21 @@ public class BoardView {
         }
 
         return grid;
+    }
+
+    public static String getColorForShip(Ship ship) {
+        if (ship instanceof model.Carrier) {
+            return "#0077be"; // Dark Blue
+        } else if (ship instanceof model.Battleship) {
+            return "#228b22"; // Forest Green
+        } else if (ship instanceof model.Cruiser) {
+            return "#b8860b"; // Dark Goldenrod
+        } else if (ship instanceof model.Submarine) {
+            return "#cd5c5c"; // Indian Red
+        } else if (ship instanceof model.Destroyer) {
+            return "#8a2be2"; // Blue Violet
+        }
+        return "#808080"; // Default Grey
     }
 
     public static void setPlayerOneBoardAction(EventHandler<ActionEvent> action) {
