@@ -67,6 +67,7 @@ public class ShipInput {
 
         // Stage 2: Display Player Name and Board
         playerNameLabel = new Label("Player: " + playerName);
+        playerNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: normal;");
         PlayerOne.setName(playerName);
         root.setTop(playerNameLabel);
 
@@ -225,10 +226,14 @@ public class ShipInput {
     }
 
     private static void endSetup() {
+        // Close the current stage
+        Stage currentStage = (Stage) shipList.getScene().getWindow();
+        currentStage.close();
         PlayerOne.getShipBoard().setShips(ships);
         InitializeGame.initializeShipBoard();
         //MovementInput.displayMovementWindow();
         //Game.printOutShipCoords();
+        MovementInput.setupScene();
         Game.printOutShipCoords(PlayerOne.getShipBoard());
     }
 }
