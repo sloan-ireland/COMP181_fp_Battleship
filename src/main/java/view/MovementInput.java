@@ -1,32 +1,25 @@
 package view;
 
 
+import controller.MovementChecker;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.PlayerOne;
 import model.Ship;
 import java.util.List;
 import java.util.ArrayList;
-import javafx.scene.layout.TilePane;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import static controller.MovementChecker.coordsAfterMove;
+
 public class MovementInput {
-
         private static Label playerNameLabel;
-        private static VBox shipList;
-        public static Ship[] ships;
-
-        private static String playerName;
-        private static int currentShipIndex = -1;
-        private static List<Button> selectedButtons = new ArrayList<>();
-        private static List<Label> shipLabels = new ArrayList<>();
-        private static boolean isPlacingShip = false;
-
-        public static List<int[]> shipCoordinates = new ArrayList<>();
 
     public static void setupScene() {
         // Create the stage
@@ -89,7 +82,7 @@ public class MovementInput {
 
             // Get the name of the ship from the button that was clicked
             String shipName = ((Button) event.getSource()).getText();
-            moveShip(PlayerOne.getShipBoard().getShip(shipName));
+            selectDirection(PlayerOne.getShipBoard().getShip(shipName));
 
 
             // Enable all buttons after the method has finished running
@@ -113,16 +106,130 @@ public class MovementInput {
         return menu;
     }
 
-    //get the coords of the ship and prompt the user to move ship to a new location
-    //movement may only be in tetris-like way. no diagonal movement. may only move to empty cells. may not move off the board
-    //this method onyl changes the Gridpane in BoardView. it does not change the shipBoard in PlayerOne
-    //create a confirm button that will lock in the cnanges. if not confirm then not change made
-    public static void moveShip(Ship ship) {
+    //create a new popup window with a set of buttons: left right up down for the user to select the direction of the ship
+    public static void selectDirection(Ship ship) {
+        Stage popupWindow = new Stage();
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setTitle("Select Direction");
+
+        VBox layout = new VBox(10);
+
+        // Create buttons for each direction
+        Button leftButton = new Button("Left");
+        ArrayList<int[]> newShipPosition = coordsAfterMove(ship.getCoordinates(), "left");
+        leftButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition));
+        leftButton.setOnAction(e -> {
+            confirmMove(newShipPosition, ship);
+            popupWindow.close();
+        });
+
+        Button rightButton = new Button("Right");
+        ArrayList<int[]> newShipPosition2 = coordsAfterMove(ship.getCoordinates(), "right");
+        rightButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition2));
+        rightButton.setOnAction(e -> {
+            confirmMove(newShipPosition2, ship);
+            popupWindow.close();
+        });
+
+        Button upButton = new Button("Up");
+        ArrayList<int[]> newShipPosition3 = coordsAfterMove(ship.getCoordinates(), "up");
+        upButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition3));
+        upButton.setOnAction(e -> {
+            confirmMove(newShipPosition3, ship);
+            popupWindow.close();
+        });
+
+        Button downButton = new Button("Down");
+        ArrayList<int[]> newShipPosition4 = coordsAfterMove(ship.getCoordinates(), "down");
+        downButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition4));
+        downButton.setOnAction(e -> {
+            confirmMove(newShipPosition4, ship);
+            popupWindow.close();
+
+        });
+
+        layout.getChildren().addAll(leftButton, rightButton, upButton, downButton);
+
+        Scene scene = new Scene(layout, 200, 200);
+        popupWindow.setScene(scene);
+        popupWindow.showAndWait();
     }
 
-    //set a new action for the board in view class.
-    //like ship input, the user can click on the cells of the board to move the ship
-    public static void promptInput() {
+    public static void confirmMove(ArrayList<int[]> newShipPosition, Ship ship) {
+        Stage popupWindow = new Stage();
+        popupWindow.initModality(Modality.APPLICATION_MODAL);
+        popupWindow.setTitle("Confirm Movement");
 
+        // Increase the size of the popup window
+        popupWindow.setWidth(500);
+        popupWindow.setHeight(500);
+
+        BorderPane layout = new BorderPane();
+        layout.setStyle("-fx-padding: 20px; -fx-background-color: #f0f0f0;"); // Set padding and background color
+
+        // Create a preview of the board with the new ship position
+        GridPane boardPreview = createBoardPreview(newShipPosition);
+        boardPreview.setStyle("-fx-background-color: #ffffff; -fx-grid-lines-visible: true;"); // Style the board preview
+
+        // Confirmation and cancel buttons with enhanced styling
+        Button confirmButton = new Button("Confirm");
+        confirmButton.setStyle("-fx-font-size: 14px; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
+        confirmButton.setOnAction(e -> {
+            MovementChecker.moveShip(ship, newShipPosition);
+            popupWindow.close();
+        });
+
+        Button cancelButton = new Button("Cancel");
+        cancelButton.setStyle("-fx-font-size: 14px; -fx-base: #F44336; -fx-text-fill: white; -fx-padding: 10px;");
+        cancelButton.setOnAction(e -> {
+            selectDirection(ship);
+            popupWindow.close();
+        });
+
+        HBox buttonLayout = new HBox(10, confirmButton, cancelButton);
+        buttonLayout.setAlignment(Pos.CENTER); // Align buttons to the center
+        buttonLayout.setStyle("-fx-padding: 10px;"); // Add padding to the button layout
+
+        layout.setBottom(buttonLayout);
+        layout.setCenter(boardPreview);
+
+        Scene scene = new Scene(layout);
+        popupWindow.setScene(scene);
+        popupWindow.showAndWait();
     }
+
+
+    private static GridPane createBoardPreview(List<int[]> newShipPosition) {
+        GridPane boardPreview = new GridPane();
+        // Clone the current board to create a preview
+        for (Node node : BoardView.getPlayerOneBoard().getChildren()) {
+            if (node instanceof Button) {
+                Button originalButton = (Button) node;
+                Button newButton = new Button();
+                newButton.setPrefSize(originalButton.getPrefWidth(), originalButton.getPrefHeight());
+                newButton.setStyle(originalButton.getStyle());
+                GridPane.setRowIndex(newButton, GridPane.getRowIndex(originalButton));
+                GridPane.setColumnIndex(newButton, GridPane.getColumnIndex(originalButton));
+                boardPreview.add(newButton, GridPane.getColumnIndex(originalButton), GridPane.getRowIndex(originalButton));
+            }
+        }
+
+        // Highlight the new ship position
+        for (int[] position : newShipPosition) {
+            int row = position[0];
+            int col = position[1];
+            for (Node node : boardPreview.getChildren()) {
+                if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col && node instanceof Button) {
+                    Button button = (Button) node;
+                    button.setStyle("-fx-background-color: #4d4d4d; -fx-text-fill: white;"); // Example style
+                    break;
+                }
+            }
+        }
+
+        return boardPreview;
+    }
+    //popup window with a new set of buttons: left right up down for the user to move the ship
+
+
 }
