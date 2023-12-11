@@ -35,7 +35,9 @@ public class ShipInput {
             setupStage.setTitle("Player 1: Name Input");
         }
         else {
+            resetClass();
             setupStage.setTitle("Player 2: Name Input");
+
         }
 
         // Layout for player name input
@@ -260,13 +262,27 @@ public class ShipInput {
 
     private static void resetClass() {
         //reset all instance variables to defualt values or make them null if they didnt have a default value
-        shipList = null;
-        ships = null;
-        playerName = null;
+        //make sure there is something in the instance variable before you set it to null
+        //check if the instance variable is null before you set it to null\
+        if (shipList != null) {
+            shipList.getChildren().clear();
+        }
+        if (ships != null) {
+            ships = null;
+        }
+        if (playerName != null) {
+            playerName = null;
+        }
         currentShipIndex = -1;
-        selectedButtons = null;
-        shipLabels = null;
+        if (selectedButtons != null) {
+            selectedButtons.clear();
+        }
+        if (shipLabels != null) {
+            shipLabels.clear();
+        }
         isPlacingShip = false;
+
+
     }
 
 }

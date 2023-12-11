@@ -184,15 +184,16 @@ public class MovementInput {
         layout.setStyle("-fx-padding: 20px; -fx-background-color: #f0f0f0;"); // Set padding and background color
         Label confirmLabel = new Label("Confirm the new position of the ship:");
         confirmLabel.getStyleClass().add("label");
-        layout.setTop(confirmLabel);
+        confirmLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;"); // Styling the label
+        layout.setCenter(confirmLabel);
 
         // Create a preview of the board with the new ship position
-        GridPane boardPreview = createBoardPreview(newShipPosition, ship);
-        boardPreview.setStyle("-fx-background-color: #ffffff; -fx-grid-lines-visible: true;"); // Style the board preview
+        //GridPane boardPreview = createBoardPreview(newShipPosition, ship);
+        //boardPreview.setStyle("-fx-background-color: #ffffff; -fx-grid-lines-visible: true;"); // Style the board preview
 
         // Confirmation and cancel buttons with enhanced styling
         Button confirmButton = new Button("Confirm");
-        confirmButton.setStyle("-fx-font-size: 14px; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
+        confirmButton.setStyle("-fx-font-size: 14; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
         confirmButton.setOnAction(e -> {
             MovementChecker.moveShip(ship, newShipPosition);
             BoardView.refreshBoardView();
@@ -217,7 +218,7 @@ public class MovementInput {
         buttonLayout.setStyle("-fx-padding: 10px;"); // Add padding to the button layout
 
         layout.setBottom(buttonLayout);
-        layout.setCenter(boardPreview);
+        //layout.setCenter(boardPreview);
 
         Scene scene = new Scene(layout);
         popupWindow.setScene(scene);
@@ -225,11 +226,14 @@ public class MovementInput {
     }
 
 
-    private static GridPane createBoardPreview(List<int[]> newShipPosition, Ship ship) {
+    /*private static GridPane createBoardPreview(List<int[]> newShipPosition, Ship ship) {
         GridPane boardPreview = new GridPane();
 
+        // Determine the current player's board
+        GridPane currentPlayerBoard = (Game.playerNumber == 1) ? BoardView.getPlayerOneBoard() : BoardView.getPlayerTwoBoard();
+
         // Clone the current board to create a preview
-        for (Node node : BoardView.getPlayerOneBoard().getChildren()) {
+        for (Node node : currentPlayerBoard.getChildren()) {
             if (node instanceof Button) {
                 Button originalButton = (Button) node;
                 Button newButton = new Button();
@@ -255,7 +259,8 @@ public class MovementInput {
         }
 
         return boardPreview;
-    }
+    }*/
+
 
 
     //popup window with a new set of buttons: left right up down for the user to move the ship
