@@ -1,6 +1,20 @@
 package controller;
 import model.*;
+import view.ShipInput;
+
+
 public class Game {
+    public static int playerNumber;
+
+    public static void startSetup() {
+        playerNumber = 1;
+        ShipInput.displaySetupWindow();
+    }
+
+    public static void setUpPlayerTwo() {
+        playerNumber = 2;
+        ShipInput.displaySetupWindow();
+    }
     public static void printOutShipCoords() {
         ShipBoard shipBoard = PlayerOne.getShipBoard();
         ShipCell[][] shipCells = shipBoard.getShipBoard();
@@ -24,6 +38,10 @@ public class Game {
             }
         }
     }
+
+
+
+
 
 
 }

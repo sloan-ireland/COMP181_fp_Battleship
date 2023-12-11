@@ -11,6 +11,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.PlayerOne;
+import model.PlayerTwo;
 import model.Ship;
 import java.util.List;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import static controller.MovementChecker.coordsAfterMove;
 import view.AttackInput;
 
 public class MovementInput {
-        private static Label playerNameLabel;
 
     public static void setupScene() {
         // Create the stage
@@ -30,7 +30,13 @@ public class MovementInput {
         Scene scene = new Scene(root, 800, 600);
 
         // Create a label for the "Name" section
-        Label nameLabel = new Label("Player: " + PlayerOne.getName());
+        Label nameLabel;
+        if (Game.playerNumber == 1) {
+            nameLabel = new Label("Player: " + PlayerOne.getName());
+        }
+        else {
+            nameLabel = new Label("Player: " + PlayerTwo.getName());
+        }
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: normal;"); // Styling the label
 
         // Create a VBox for the ship selection menu and add the nameLabel to it
@@ -40,11 +46,23 @@ public class MovementInput {
         // Set the ship selection menu to the left
         root.setLeft(menu);
 
-        root.setCenter(BoardView.getPlayerOneBoard());
+        if (Game.playerNumber == 1) {
+            // Set the ship board to the center
+            root.setCenter(BoardView.getPlayerOneBoard());
+        }
+        else {
+            // Set the ship board to the center
+            root.setCenter(BoardView.getPlayerTwoBoard());
+        }
 
         // Configure the stage
         stage.setScene(scene);
-        stage.setTitle("Move Your Ships");
+        if (Game.playerNumber == 1) {
+            stage.setTitle("PlayerOne: Move a Ship");
+        }
+        else {
+            stage.setTitle("PlayerTwo: Move a Ship");
+        }
 
         // Show the stage
         stage.show();
@@ -83,7 +101,12 @@ public class MovementInput {
 
             // Get the name of the ship from the button that was clicked
             String shipName = ((Button) event.getSource()).getText();
-            selectDirection(PlayerOne.getShipBoard().getShip(shipName));
+            if (Game.playerNumber == 1) {
+                selectDirection(PlayerOne.getShipBoard().getShip(shipName));
+            }
+            else {
+                selectDirection(PlayerTwo.getShipBoard().getShip(shipName));
+            }
 
 
             // Enable all buttons after the method has finished running

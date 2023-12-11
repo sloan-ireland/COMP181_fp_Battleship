@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import model.*;
 import controller.InitializeGame;
-import javafx.event.EventHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,6 @@ import java.util.Comparator;
 
 public class ShipInput {
 
-    private static Label playerNameLabel;
     private static VBox shipList;
     public static Ship[] ships;
 
@@ -28,13 +26,17 @@ public class ShipInput {
     private static List<Button> selectedButtons = new ArrayList<>();
     private static List<Label> shipLabels = new ArrayList<>();
     private static boolean isPlacingShip = false;
-
-    public static List<int[]> shipCoordinates = new ArrayList<>();
-
+    
+    
 
     public static void displaySetupWindow() {
         Stage setupStage = new Stage();
-        setupStage.setTitle("Setup Your Board");
+        if (Game.playerNumber == 1) {
+            setupStage.setTitle("Player 1: Name Input");
+        }
+        else {
+            setupStage.setTitle("Player 2: Name Input");
+        }
 
         // Layout for player name input
         BorderPane nameInputLayout = new BorderPane();
@@ -60,23 +62,50 @@ public class ShipInput {
 
     private static void setupBoardAndShips() {
         Stage boardStage = new Stage();
-        boardStage.setTitle("Place Your Ships");
+        if (Game.playerNumber == 1) {
+            boardStage.setTitle("Player 1: Ship Setup");
+        }
+        else {
+            boardStage.setTitle("Player 2: Ship Setup");
+        }
 
         // Create a new BorderPane for the new scene
         BorderPane root = new BorderPane();
 
         // Stage 2: Display Player Name and Board
-        playerNameLabel = new Label("Player: " + playerName);
+        Label playerNameLabel;
+        if (Game.playerNumber == 1) {
+            playerNameLabel = new Label("Player 1: " + playerName);
+        }
+        else {
+            playerNameLabel = new Label("Player 2: " + playerName);
+        }
         playerNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: normal;");
-        PlayerOne.setName(playerName);
+        if (Game.playerNumber == 1) {
+            PlayerOne.setName(playerName);
+        }
+        else {
+            PlayerTwo.setName(playerName);
+        }
         root.setTop(playerNameLabel);
 
-        BoardView.setPlayerOneBoardAction(e -> {
-            int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
-            int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
-            handleCellClick(row, col, (Button) e.getSource());
-        });
-        root.setCenter(BoardView.getPlayerOneBoard());
+        if (Game.playerNumber == 1) {
+            BoardView.setPlayerOneBoardAction(e -> {
+                int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
+                int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
+                handleCellClick(row, col, (Button) e.getSource());
+            });
+            root.setCenter(BoardView.getPlayerOneBoard());
+        }
+        else {
+            BoardView.setPlayerTwoBoardAction(e -> {
+                int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
+                int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
+                handleCellClick(row, col, (Button) e.getSource());
+            });
+            root.setCenter(BoardView.getPlayerTwoBoard());
+        }
+        
 
 
         shipList = new VBox(10);
@@ -203,7 +232,11 @@ public class ShipInput {
 
                 // Check if all ships have been placed
                 if (allShipsPlaced()) {
-                    endSetup();
+                    System.out.println("All ships placed");
+                    // Close the current stage
+                    Stage currentStage = (Stage) shipList.getScene().getWindow();
+                    currentStage.close();
+                    InitializeGame.endSetup(ships);
                 }
             } else {
                 for (Button button : selectedButtons) {
@@ -225,15 +258,15 @@ public class ShipInput {
         return true; // All ship labels are disabled, meaning all ships are placed
     }
 
-    private static void endSetup() {
-        // Close the current stage
-        Stage currentStage = (Stage) shipList.getScene().getWindow();
-        currentStage.close();
-        PlayerOne.getShipBoard().setShips(ships);
-        InitializeGame.initializeShipBoard();
-        //MovementInput.displayMovementWindow();
-        //Game.printOutShipCoords();
-        MovementInput.setupScene();
-        Game.printOutShipCoords(PlayerOne.getShipBoard());
+    private static void resetClass() {
+        //reset all instance variables to defualt values or make them null if they didnt have a default value
+        shipList = null;
+        ships = null;
+        playerName = null;
+        currentShipIndex = -1;
+        selectedButtons = null;
+        shipLabels = null;
+        isPlacingShip = false;
     }
+
 }
