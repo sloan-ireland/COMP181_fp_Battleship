@@ -1,6 +1,7 @@
 package view;
 
 
+import controller.Game;
 import controller.MovementChecker;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,10 +14,10 @@ import model.PlayerOne;
 import model.Ship;
 import java.util.List;
 import java.util.ArrayList;
-
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import static controller.MovementChecker.coordsAfterMove;
+import view.AttackInput;
 
 public class MovementInput {
         private static Label playerNameLabel;
@@ -113,47 +114,39 @@ public class MovementInput {
         popupWindow.setTitle("Select Direction");
 
         VBox layout = new VBox(10);
+        layout.setAlignment(Pos.CENTER);
+        layout.setStyle("-fx-padding: 20px; -fx-background-color: #f0f0f0;"); // Set padding and background color
 
-        // Create buttons for each direction
-        Button leftButton = new Button("Left");
-        ArrayList<int[]> newShipPosition = coordsAfterMove(ship.getCoordinates(), "left");
-        leftButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition));
-        leftButton.setOnAction(e -> {
-            confirmMove(newShipPosition, ship);
-            popupWindow.close();
-        });
+        Label directionLabel = new Label("Select the direction to move the ship:");
+        directionLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333333;"); // Styling the label
+        layout.getChildren().add(directionLabel);
 
-        Button rightButton = new Button("Right");
-        ArrayList<int[]> newShipPosition2 = coordsAfterMove(ship.getCoordinates(), "right");
-        rightButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition2));
-        rightButton.setOnAction(e -> {
-            confirmMove(newShipPosition2, ship);
-            popupWindow.close();
-        });
-
-        Button upButton = new Button("Up");
-        ArrayList<int[]> newShipPosition3 = coordsAfterMove(ship.getCoordinates(), "up");
-        upButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition3));
-        upButton.setOnAction(e -> {
-            confirmMove(newShipPosition3, ship);
-            popupWindow.close();
-        });
-
-        Button downButton = new Button("Down");
-        ArrayList<int[]> newShipPosition4 = coordsAfterMove(ship.getCoordinates(), "down");
-        downButton.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition4));
-        downButton.setOnAction(e -> {
-            confirmMove(newShipPosition4, ship);
-            popupWindow.close();
-
-        });
+        // Create and style buttons for each direction
+        Button leftButton = createStyledButton("Left", ship, "left");
+        Button rightButton = createStyledButton("Right", ship, "right");
+        Button upButton = createStyledButton("Up", ship, "up");
+        Button downButton = createStyledButton("Down", ship, "down");
 
         layout.getChildren().addAll(leftButton, rightButton, upButton, downButton);
 
-        Scene scene = new Scene(layout, 200, 200);
+        Scene scene = new Scene(layout, 400, 400);
         popupWindow.setScene(scene);
         popupWindow.showAndWait();
     }
+
+    private static Button createStyledButton(String text, Ship ship, String direction) {
+        Button button = new Button(text);
+        ArrayList<int[]> newShipPosition = coordsAfterMove(ship.getCoordinates(), direction);
+        button.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition, ship));
+        button.setOnAction(e -> {
+            confirmMove(newShipPosition, ship);
+            Stage stage = (Stage) button.getScene().getWindow();
+            stage.close();
+        });
+        button.setStyle("-fx-font-size: 14px; -fx-base: #4d4d4d; -fx-text-fill: white; -fx-padding: 10px;");
+        return button;
+    }
+
 
     public static void confirmMove(ArrayList<int[]> newShipPosition, Ship ship) {
         Stage popupWindow = new Stage();
@@ -166,9 +159,12 @@ public class MovementInput {
 
         BorderPane layout = new BorderPane();
         layout.setStyle("-fx-padding: 20px; -fx-background-color: #f0f0f0;"); // Set padding and background color
+        Label confirmLabel = new Label("Confirm the new position of the ship:");
+        confirmLabel.getStyleClass().add("label");
+        layout.setTop(confirmLabel);
 
         // Create a preview of the board with the new ship position
-        GridPane boardPreview = createBoardPreview(newShipPosition);
+        GridPane boardPreview = createBoardPreview(newShipPosition, ship);
         boardPreview.setStyle("-fx-background-color: #ffffff; -fx-grid-lines-visible: true;"); // Style the board preview
 
         // Confirmation and cancel buttons with enhanced styling
@@ -176,13 +172,20 @@ public class MovementInput {
         confirmButton.setStyle("-fx-font-size: 14px; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
         confirmButton.setOnAction(e -> {
             MovementChecker.moveShip(ship, newShipPosition);
+            BoardView.refreshBoardView();
+            //make a new button that says "Move to Attack Phase" and when clicked, closes the window and opens the attack phase
+            // Refresh the board view to show the updated positions
             popupWindow.close();
+            //close the current stage
+            Stage currentStage = (Stage) confirmButton.getScene().getWindow();
+            currentStage.close();
+            AttackInput.setupAttackScreen();
+
         });
 
         Button cancelButton = new Button("Cancel");
         cancelButton.setStyle("-fx-font-size: 14px; -fx-base: #F44336; -fx-text-fill: white; -fx-padding: 10px;");
         cancelButton.setOnAction(e -> {
-            selectDirection(ship);
             popupWindow.close();
         });
 
@@ -199,8 +202,9 @@ public class MovementInput {
     }
 
 
-    private static GridPane createBoardPreview(List<int[]> newShipPosition) {
+    private static GridPane createBoardPreview(List<int[]> newShipPosition, Ship ship) {
         GridPane boardPreview = new GridPane();
+
         // Clone the current board to create a preview
         for (Node node : BoardView.getPlayerOneBoard().getChildren()) {
             if (node instanceof Button) {
@@ -214,21 +218,23 @@ public class MovementInput {
             }
         }
 
-        // Highlight the new ship position
+        // Update the ship's position on the board
+        String shipColor = BoardView.getColorForShip(ship); // Get the color for the ship
         for (int[] position : newShipPosition) {
-            int row = position[0];
-            int col = position[1];
+            int col = position[0];
+            int row = position[1];
             for (Node node : boardPreview.getChildren()) {
                 if (GridPane.getRowIndex(node) == row && GridPane.getColumnIndex(node) == col && node instanceof Button) {
                     Button button = (Button) node;
-                    button.setStyle("-fx-background-color: #4d4d4d; -fx-text-fill: white;"); // Example style
-                    break;
+                    button.setStyle("-fx-background-color: " + shipColor + ";");
                 }
             }
         }
 
         return boardPreview;
     }
+
+
     //popup window with a new set of buttons: left right up down for the user to move the ship
 
 

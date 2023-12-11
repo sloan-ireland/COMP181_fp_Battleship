@@ -1,0 +1,29 @@
+.button {
+    -fx-font-size: 14px;
+    -fx-base: #4d4d4d;
+    -fx-padding: 10px;
+    -fx-text-fill: white;
+}
+
+.confirm-button {
+    -fx-base: #4CAF50;
+}
+
+.cancel-button {
+    -fx-base: #F44336;
+}
+
+.popup-window {
+    -fx-padding: 20px;
+    -fx-background-color: #f0f0f0;
+}
+
+.board-preview {
+    -fx-background-color: #ffffff;
+    -fx-grid-lines-visible: true;
+}
+
+.label {
+    -fx-font-size: 16px;
+    -fx-font-weight: normal;
+}
