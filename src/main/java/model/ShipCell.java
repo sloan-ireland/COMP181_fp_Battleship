@@ -23,6 +23,10 @@ public class ShipCell extends Cell {
         return isHit;
     }
 
+    public boolean isShipPresent() {
+        return occupantShip != null;
+    }
+
     public void setIsHit(boolean isHit) {
         this.isHit = isHit;
     }

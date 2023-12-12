@@ -3,6 +3,7 @@ package view;
 
 import controller.Game;
 import controller.MovementChecker;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -21,10 +22,11 @@ import static controller.MovementChecker.coordsAfterMove;
 import view.AttackInput;
 
 public class MovementInput {
+    static Stage stage;
 
     public static void setupScene() {
         // Create the stage
-        Stage stage = new Stage();
+        stage = new Stage();
         // Create the root pane and set the scene
         BorderPane root = new BorderPane();
         Scene scene = new Scene(root, 800, 600);
@@ -197,15 +199,20 @@ public class MovementInput {
         confirmButton.setOnAction(e -> {
             MovementChecker.moveShip(ship, newShipPosition);
             BoardView.refreshBoardView();
-            //make a new button that says "Move to Attack Phase" and when clicked, closes the window and opens the attack phase
-            // Refresh the board view to show the updated positions
             popupWindow.close();
-            //close the current stage
-            Stage currentStage = (Stage) confirmButton.getScene().getWindow();
-            currentStage.close();
-            AttackInput.setupAttackScreen();
+
+            //close the movement window
+            stage.close();
+
+
+            Platform.runLater(AttackInput::setupAttackScreen);
+
+
+            //terminate the current process
+
 
         });
+
 
         Button cancelButton = new Button("Cancel");
         cancelButton.setStyle("-fx-font-size: 14px; -fx-base: #F44336; -fx-text-fill: white; -fx-padding: 10px;");

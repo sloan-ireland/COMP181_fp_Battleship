@@ -11,4 +11,8 @@ public class AttackBoard extends Board{
             }
         }
     }
+
+    public AttackCell[][] getAttackBoard() {
+        return attackBoard;
+    }
 }

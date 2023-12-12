@@ -234,7 +234,7 @@ public class ShipInput {
 
                 // Check if all ships have been placed
                 if (allShipsPlaced()) {
-                    System.out.println("All ships placed");
+                    //System.out.println("All ships placed");
                     // Close the current stage
                     Stage currentStage = (Stage) shipList.getScene().getWindow();
                     currentStage.close();
