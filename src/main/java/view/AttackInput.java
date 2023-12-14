@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.AttackCell;
 import model.PlayerOne;
@@ -28,23 +29,22 @@ public class AttackInput {
 
         //cfreate an event handler for the attack board
         EventHandler attackBoardClick = event -> {
-            int row = GridPane.getRowIndex((Button) event.getSource());
-            int col = GridPane.getColumnIndex((Button) event.getSource());
+            int row = GridPane.getColumnIndex((Button) event.getSource()) - 1;
+            int col = GridPane.getRowIndex((Button) event.getSource()) - 1;
             if (confirmAttack(row, col)) {
-                handleAttack((Button) event.getSource());
+                handleAttack((Button) event.getSource(), row, col);
             }
         };
 
         // Determine which player's attack board to display based on the current turn
         GridPane attackBoard;
         if (Game.playerNumber == 1) {
-            attackBoard = BoardView.playerOneAttackBoard;
             BoardView.setPlayerOneAttackBoardAction(attackBoardClick);
+            attackBoard = BoardView.getPlayerOneAttackBoard();
         } else {
-            attackBoard = BoardView.playerTwoAttackBoard;
             BoardView.setPlayerTwoAttackBoardAction(attackBoardClick);
+            attackBoard = BoardView.getPlayerTwoAttackBoard();
         }
-
         root.setCenter(attackBoard);
         stage.setScene(scene);
         stage.setTitle("Player " + Game.playerNumber + ": Attack Phase");
@@ -54,6 +54,7 @@ public class AttackInput {
 
     private static boolean confirmAttack(int row, int col) {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmAlert.initModality(Modality.APPLICATION_MODAL);
         confirmAlert.setTitle("Confirm Attack");
         confirmAlert.setHeaderText("Confirm Your Attack");
         confirmAlert.setContentText("Do you want to attack cell (" + row + ", " + col + ")?");
@@ -62,17 +63,12 @@ public class AttackInput {
         return result.isPresent() && result.get() == ButtonType.OK;
     }
 
-    private static void handleAttack(Button cell) {
+    private static void handleAttack(Button cell, int row, int col) {
         attackCount++;
-        int row = GridPane.getRowIndex(cell);
-        int col = GridPane.getColumnIndex(cell);
-
-        // Perform the attack logi
-
-        // Update the cell style based on whether it's a hit or miss
+        // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            cell.setStyle("-fx-background-color: red;");
             AttackChecker.updateShipBoard(row, col);
+            cell.setStyle("-fx-background-color: red;");
         } else {
             cell.setStyle("-fx-background-color: blue;");
         }

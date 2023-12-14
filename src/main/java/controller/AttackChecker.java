@@ -7,9 +7,9 @@ public class AttackChecker {
     //based on what Game.playerNumber is, check the other player's shipboard
     public static boolean checkAttack(int x, int y) {
         if (Game.playerNumber == 1) {
-            return PlayerTwo.getShipBoard().getShipBoard()[x][y].isShipPresent();
+            return PlayerTwo.getShipBoard().getShipBoard()[x][y].getIsHit();
         } else {
-            return PlayerOne.getShipBoard().getShipBoard()[x][y].isShipPresent();
+            return PlayerOne.getShipBoard().getShipBoard()[x][y].getIsHit();
         }
     }
 

@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import model.PlayerOne;
+import model.PlayerTwo;
 import model.Ship;
+import model.ShipBoard;
 
 public class BoardView {
     public static GridPane playerOneShipBoard = createBoard(null);
@@ -128,6 +130,50 @@ public class BoardView {
             Label rowLabel = new Label(Integer.toString(row));
             grid.add(rowLabel, 0, row + 1); // Offset by 1 to account for X-axis labels
         }
+    }
+
+    public static void initializePlayerOneShipBoard() {
+        // Ensure PlayerOne's ShipBoard is initialized
+        if (PlayerOne.getShipBoard() == null) {
+            PlayerOne.setShipBoard(new ShipBoard());
+        }
+        ShipBoard shipBoard = PlayerOne.getShipBoard();
+        // Check if ships are set for PlayerOne
+        if (shipBoard.getShips() != null) {
+            // Cycle through the ships and add them to the board
+            for (Ship ship : shipBoard.getShips()) {
+                if (ship.getCoordinates() != null) {
+                    for (int[] coord : ship.getCoordinates()) {
+                        shipBoard.getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                    }
+                }
+            }
+        }
+
+        // Update PlayerOne's ShipBoard
+        PlayerOne.setShipBoard(shipBoard);
+    }
+
+    public static void initializePlayerTwoShipBoard() {
+        // Ensure PlayerOne's ShipBoard is initialized
+        if (PlayerTwo.getShipBoard() == null) {
+            PlayerTwo.setShipBoard(new ShipBoard());
+        }
+        ShipBoard shipBoard = PlayerTwo.getShipBoard();
+        // Check if ships are set for PlayerTwo
+        if (shipBoard.getShips() != null) {
+            // Cycle through the ships and add them to the board
+            for (Ship ship : shipBoard.getShips()) {
+                if (ship.getCoordinates() != null) {
+                    for (int[] coord : ship.getCoordinates()) {
+                        shipBoard.getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                    }
+                }
+            }
+        }
+
+        // Update PlayerTwo's ShipBoard
+        PlayerTwo.setShipBoard(shipBoard);
     }
 
     public static void setPlayerOneBoardAction(EventHandler<ActionEvent> action) {
