@@ -21,6 +21,7 @@ public class StartScreen extends Application {
 
         Scene scene = new Scene(root, 500, 300);
         stage.setTitle("Battleship Game");
+        Game.applyCommonStyles(scene);
         stage.setScene(scene);
         stage.show();
     }

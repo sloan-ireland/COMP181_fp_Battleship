@@ -4,6 +4,7 @@ package view;
 import controller.Game;
 import controller.MovementChecker;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -22,9 +23,12 @@ import static controller.MovementChecker.coordsAfterMove;
 import view.AttackInput;
 
 public class MovementInput {
-    static Stage stage;
+    public static Stage stage;
 
     public static void setupScene() {
+        if (Game.playerNumber == 2) {
+            stage = null;
+        }
         // Create the stage
         stage = new Stage();
         // Create the root pane and set the scene
@@ -41,12 +45,30 @@ public class MovementInput {
         }
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: normal;"); // Styling the label
 
+        Label shipBoardLabel = new Label("Ship Board");
+        shipBoardLabel.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 10px;");
+        shipBoardLabel.setAlignment(Pos.CENTER);
+        BorderPane.setAlignment(shipBoardLabel, Pos.CENTER);
+        root.setTop(shipBoardLabel);
+
         // Create a VBox for the ship selection menu and add the nameLabel to it
         TilePane menu = createShipSelectionMenu();
-        menu.getChildren().add(0, nameLabel); // Add nameLabel at the top of the VBox
+        Label instructionsLabel = new Label("Instructions: Click on the button for the ship you want to move, \n" +
+                "then select the direction you want to move it in.\n"
+                + "If the button is disabled, then you cannot move the ship in that direction.\n" +
+                "If you do not want to move a ship, click the \"Progress to Attack Phase\" button.");
 
-        // Set the ship selection menu to the left
-        root.setLeft(menu);
+        instructionsLabel.setWrapText(true); // Enable text wrapping
+        instructionsLabel.setMaxWidth(200); // Set max width for proper wrapping
+        instructionsLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;"); // Styling the instructions label
+        VBox vbox = new VBox(10); // Use VBox for vertical stacking
+        vbox.getChildren().addAll(nameLabel, instructionsLabel, menu);
+        vbox.setStyle("-fx-padding: 10px;"); // Add padding to the VBox
+
+        root.setLeft(vbox);
+
+        //make sure to set the menu to the left below the vbox
+
 
         if (Game.playerNumber == 1) {
             // Set the ship board to the center
@@ -58,6 +80,7 @@ public class MovementInput {
         }
 
         // Configure the stage
+        Game.applyCommonStyles(scene);
         stage.setScene(scene);
         if (Game.playerNumber == 1) {
             stage.setTitle("PlayerOne: Move a Ship");
@@ -66,6 +89,17 @@ public class MovementInput {
             stage.setTitle("PlayerTwo: Move a Ship");
         }
 
+        //create a button that will progress to the attack phase and make it look nice
+        Button moveToAttackPhase = new Button("Progress to Attack Phase");
+        root.setBottom(moveToAttackPhase);
+        BorderPane.setAlignment(moveToAttackPhase, Pos.CENTER);
+        BorderPane.setMargin(moveToAttackPhase, new Insets(10, 10, 10, 10));
+        moveToAttackPhase.setStyle("-fx-font-size: 14px; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
+
+        moveToAttackPhase.setOnAction(e -> {
+            stage.close();
+            AttackInput.setupAttackScreen();
+        });
         // Show the stage
         stage.show();
     }
@@ -147,10 +181,10 @@ public class MovementInput {
         layout.getChildren().add(directionLabel);
 
         // Create and style buttons for each direction
-        Button leftButton = createStyledButton("Left", ship, "left");
-        Button rightButton = createStyledButton("Right", ship, "right");
-        Button upButton = createStyledButton("Up", ship, "up");
-        Button downButton = createStyledButton("Down", ship, "down");
+        Button leftButton = createDirectionButton("Left", ship, "left");
+        Button rightButton = createDirectionButton("Right", ship, "right");
+        Button upButton = createDirectionButton("Up", ship, "up");
+        Button downButton = createDirectionButton("Down", ship, "down");
 
         layout.getChildren().addAll(leftButton, rightButton, upButton, downButton);
 
@@ -159,7 +193,7 @@ public class MovementInput {
         popupWindow.showAndWait();
     }
 
-    private static Button createStyledButton(String text, Ship ship, String direction) {
+    private static Button createDirectionButton(String text, Ship ship, String direction) {
         Button button = new Button(text);
         ArrayList<int[]> newShipPosition = coordsAfterMove(ship.getCoordinates(), direction);
         button.setDisable(!MovementChecker.checkMovement(ship.getCoordinates(), newShipPosition, ship));
@@ -204,13 +238,8 @@ public class MovementInput {
             //close the movement window
             stage.close();
 
-
-            Platform.runLater(AttackInput::setupAttackScreen);
-
-
-            //terminate the current process
-
-
+            AttackInput.setupAttackScreen();
+            
         });
 
 

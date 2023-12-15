@@ -1,16 +1,13 @@
 package view;
 
+import controller.Game;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
-import model.PlayerOne;
-import model.PlayerTwo;
-import model.Ship;
-import model.ShipBoard;
+import model.*;
 
 public class BoardView {
     public static GridPane playerOneShipBoard = createBoard(null);
@@ -113,8 +110,16 @@ public class BoardView {
                 if (occupantShip != null) {
                     String shipColor = getColorForShip(occupantShip);
                     cell.setStyle("-fx-background-color: " + shipColor + ";");
+
                 }
             }
+        }
+        //loop through the board and set the text of the button to the corresponding number in the damageByCell array
+        Ship[] ships;
+        if (Game.playerNumber == 1) {
+            ships = PlayerOne.getShipBoard().getShips();
+        } else {
+            ships = PlayerTwo.getShipBoard().getShips();
         }
     }
 
@@ -176,6 +181,39 @@ public class BoardView {
         PlayerTwo.setShipBoard(shipBoard);
     }
 
+    public static void updateAttackBoard(Button cell) {
+        // Determine which player's attack board to update based on the current turn
+        GridPane attackBoard;
+        AttackBoard playerAttackBoard;
+        if (Game.playerNumber == 1) {
+            attackBoard = playerOneAttackBoard;
+            playerAttackBoard = PlayerOne.getAttackBoard();
+        } else {
+            attackBoard = playerTwoAttackBoard;
+            playerAttackBoard = PlayerTwo.getAttackBoard();
+        }
+
+        int row = GridPane.getRowIndex(cell);
+        int col = GridPane.getColumnIndex(cell);
+        AttackCell attackCell = playerAttackBoard.getAttackBoard()[row][col];
+
+        // Update cell style based on attack status
+        if (attackCell.getShipHit()) {
+            cell.setStyle("-fx-background-color: red;"); // Hit
+        } else if (attackCell.getShipSunk()) {
+            cell.setStyle("-fx-background-color: black;"); // Sunk
+        } else {
+            cell.setStyle("-fx-background-color: blue;"); // Miss
+        }
+
+
+
+        // Update the attack board
+        attackBoard.getChildren().remove(cell);
+        attackBoard.add(cell, col, row);
+    }
+
+
     public static void setPlayerOneBoardAction(EventHandler<ActionEvent> action) {
         playerOneShipBoard = createBoard(action);
     }
@@ -207,4 +245,6 @@ public class BoardView {
     public static void setPlayerTwoAttackBoardAction(EventHandler<ActionEvent> action) {
         playerTwoAttackBoard = createAttackBoard(action);
     }
+
+
 }

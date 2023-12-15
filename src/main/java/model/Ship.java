@@ -7,6 +7,9 @@ public abstract class Ship {
     protected int length;
     public ArrayList<int[]> coordinates = new ArrayList<>();
     protected boolean isSunk;
+
+    protected int[] damageByCell;
+
     public String name;
 
     public Ship() {

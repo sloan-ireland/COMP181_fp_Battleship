@@ -50,6 +50,7 @@ public class ShipInput {
 
         // Scene and Stage for name input
         Scene nameInputScene = new Scene(nameInputLayout, 400, 300);
+        Game.applyCommonStyles(nameInputScene);
         setupStage.setScene(nameInputScene);
         setupStage.show();
 
@@ -90,6 +91,23 @@ public class ShipInput {
         }
         root.setTop(playerNameLabel);
 
+        shipList = new VBox(10);
+        shipList.setAlignment(Pos.CENTER);
+        root.setLeft(shipList);
+
+        Label instructionLabel = new Label("Click on a ship to place it:\nOnce selected, click on the board to place the ship\nYou must place that ship before you can move on.");
+        shipList.getChildren().add(instructionLabel);
+
+        ships = new Ship[]{new model.Carrier(), new model.Battleship(), new model.Cruiser(), new model.Submarine(), new model.Destroyer()};
+        for (Ship ship : ships) {
+            Label shipLabel = new Label(ship.getName() + " (Length: " + ship.getLength() + ")");
+            shipLabel.setStyle("-fx-border-color: black; -fx-padding: 5px;");
+            shipLabel.setOnMouseClicked(e -> selectShipForPlacement(ship, shipLabel));
+            shipList.getChildren().add(shipLabel);
+            shipLabels.add(shipLabel);
+        }
+
+
         if (Game.playerNumber == 1) {
             BoardView.setPlayerOneBoardAction(e -> {
                 int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
@@ -109,21 +127,7 @@ public class ShipInput {
         
 
 
-        shipList = new VBox(10);
-        shipList.setAlignment(Pos.CENTER);
-        root.setLeft(shipList);
 
-        Label instructionLabel = new Label("Click on a ship to place it:\nOnce selected, click on the board to place the ship\nYou must place that ship before you can move on.");
-        shipList.getChildren().add(instructionLabel);
-
-        ships = new Ship[]{new model.Carrier(), new model.Battleship(), new model.Cruiser(), new model.Submarine(), new model.Destroyer()};
-        for (Ship ship : ships) {
-            Label shipLabel = new Label(ship.getName() + " (Length: " + ship.getLength() + ")");
-            shipLabel.setStyle("-fx-border-color: black; -fx-padding: 5px;");
-            shipLabel.setOnMouseClicked(e -> selectShipForPlacement(ship, shipLabel));
-            shipList.getChildren().add(shipLabel);
-            shipLabels.add(shipLabel);
-        }
 
         Scene scene = new Scene(root, 800, 600);
         boardStage.setScene(scene);

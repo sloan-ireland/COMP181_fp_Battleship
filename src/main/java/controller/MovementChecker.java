@@ -1,6 +1,7 @@
 package controller;
 
 import model.PlayerOne;
+import model.PlayerTwo;
 import model.Ship;
 
 import java.util.ArrayList;
@@ -29,9 +30,17 @@ public class MovementChecker {
                 return false;
             }
 
-            // Check for ship overlap, excluding the ship's current position
-            if (!startPosSet.contains(posKey) && PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].getOccupantShip() != null) {
-                return false;
+            if (Game.playerNumber == 1) {
+                // Check for ship overlap, excluding the ship's current position
+                if (!startPosSet.contains(posKey) && PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].getOccupantShip() != null) {
+                    return false;
+                }
+            }
+            else {
+                // Check for ship overlap, excluding the ship's current position
+                if (!startPosSet.contains(posKey) && PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].getOccupantShip() != null) {
+                    return false;
+                }
             }
         }
 
@@ -73,11 +82,21 @@ public class MovementChecker {
     public static void moveShip(Ship ship, ArrayList<int[]> newShipPosition) {
         //remove the ship from the old coordinates
         for (int[] coord : ship.getCoordinates()) {
-            PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
+            if (Game.playerNumber == 1) {
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
+            }
+            else {
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
+            }
         }
         //add the ship to the new coordinates
         for (int[] coord : newShipPosition) {
-            PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+            if (Game.playerNumber == 1) {
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+            }
+            else {
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+            }
         }
         //update the ship's coordinates
         ship.setCoordinates(newShipPosition);
