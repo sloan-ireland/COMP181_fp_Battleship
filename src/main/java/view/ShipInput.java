@@ -238,13 +238,6 @@ public class ShipInput {
                     Stage currentStage = (Stage) shipList.getScene().getWindow();
                     currentStage.close();
                     Game.endSetup(ships);
-                    //print out what the content of ships by looping through the array and printing out the name of the ship and the coords of the ship
-                    for (Ship ship : ships) {
-                        System.out.println(ship.getName());
-                        for (int j = 0; j < ship.getCoordinates().size(); j++) {
-                            System.out.println(ship.getCoordinates().get(j)[0] + " " + ship.getCoordinates().get(j)[1]);
-                        }
-                    }
                 }
             } else {
                 for (Button button : selectedButtons) {
@@ -273,9 +266,7 @@ public class ShipInput {
         if (shipList != null) {
             shipList.getChildren().clear();
         }
-        if (ships != null) {
-            ships = null;
-        }
+        //set ships to
         if (playerName != null) {
             playerName = null;
         }
