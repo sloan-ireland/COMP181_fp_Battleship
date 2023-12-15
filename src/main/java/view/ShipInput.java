@@ -36,18 +36,7 @@ public class ShipInput {
         }
         else {
             resetClass();
-            System.out.println("reset");
-            //print out the values of the instance variables to make sure they are reset
-            System.out.println(shipList);
-            System.out.println(ships);
-            System.out.println(playerName);
-            System.out.println(currentShipIndex);
-            System.out.println(selectedButtons);
-            System.out.println(shipLabels);
-            System.out.println(isPlacingShip);
-
             setupStage.setTitle("Player 2: Name Input");
-
         }
 
         // Layout for player name input
@@ -249,6 +238,13 @@ public class ShipInput {
                     Stage currentStage = (Stage) shipList.getScene().getWindow();
                     currentStage.close();
                     Game.endSetup(ships);
+                    //print out what the content of ships by looping through the array and printing out the name of the ship and the coords of the ship
+                    for (Ship ship : ships) {
+                        System.out.println(ship.getName());
+                        for (int j = 0; j < ship.getCoordinates().size(); j++) {
+                            System.out.println(ship.getCoordinates().get(j)[0] + " " + ship.getCoordinates().get(j)[1]);
+                        }
+                    }
                 }
             } else {
                 for (Button button : selectedButtons) {
