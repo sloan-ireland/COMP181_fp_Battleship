@@ -14,6 +14,7 @@ public class AttackCell extends Cell {
         this.shipHit = false;
         this.shipSunk = false;
         this.roundSinceHit = 0;
+        this.colorOfCell = "default";
     }
 
     public boolean getShipHit() {

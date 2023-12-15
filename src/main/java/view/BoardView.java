@@ -10,14 +10,14 @@ import javafx.scene.layout.GridPane;
 import model.*;
 
 public class BoardView {
-    public static GridPane playerOneShipBoard = createBoard(null);
-    public static GridPane playerTwoShipBoard = createBoard(null);
+    public static GridPane playerOneShipBoard = createShipBoard(null);
+    public static GridPane playerTwoShipBoard = createShipBoard(null);
 
     public static GridPane playerOneAttackBoard = createAttackBoard(null);
     public static GridPane playerTwoAttackBoard = createAttackBoard(null);
 
 
-    public static GridPane createBoard(EventHandler<ActionEvent> cellClickAction) {
+    public static GridPane createShipBoard(EventHandler<ActionEvent> cellClickAction) {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setHgap(5); // Reduced horizontal gap
@@ -72,6 +72,18 @@ public class BoardView {
                 Button cell = new Button();
                 cell.setPrefSize(30, 30); // Adjust size as needed
                 grid.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
+                AttackCell cellForColor;
+                if (Game.playerNumber == 1) {
+                    cellForColor = PlayerOne.getAttackBoard().getAttackBoard()[col][row];
+                } else {
+                    cellForColor = PlayerTwo.getAttackBoard().getAttackBoard()[col][row];
+                }
+                if (cellForColor.getColorOfCell().equals("red")) {
+                    cell.setStyle("-fx-background-color: red;");
+                }
+                if (cellForColor.getColorOfCell().equals("blue")) {
+                    cell.setStyle("-fx-background-color: blue;");
+                }
                 cell.setOnAction(cellClickAction);
             }
         }
@@ -115,12 +127,12 @@ public class BoardView {
             }
         }
         //loop through the board and set the text of the button to the corresponding number in the damageByCell array
-        Ship[] ships;
+        /*Ship[] ships;
         if (Game.playerNumber == 1) {
             ships = PlayerOne.getShipBoard().getShips();
         } else {
             ships = PlayerTwo.getShipBoard().getShips();
-        }
+        }*/
     }
 
     private static void addAxisLabels(GridPane grid) {
@@ -181,45 +193,17 @@ public class BoardView {
         PlayerTwo.setShipBoard(shipBoard);
     }
 
-    public static void updateAttackBoard(Button cell) {
-        // Determine which player's attack board to update based on the current turn
-        GridPane attackBoard;
-        AttackBoard playerAttackBoard;
-        if (Game.playerNumber == 1) {
-            attackBoard = playerOneAttackBoard;
-            playerAttackBoard = PlayerOne.getAttackBoard();
-        } else {
-            attackBoard = playerTwoAttackBoard;
-            playerAttackBoard = PlayerTwo.getAttackBoard();
-        }
-
-        int row = GridPane.getRowIndex(cell);
-        int col = GridPane.getColumnIndex(cell);
-        AttackCell attackCell = playerAttackBoard.getAttackBoard()[row][col];
-
-        // Update cell style based on attack status
-        if (attackCell.getShipHit()) {
-            cell.setStyle("-fx-background-color: red;"); // Hit
-        } else if (attackCell.getShipSunk()) {
-            cell.setStyle("-fx-background-color: black;"); // Sunk
-        } else {
-            cell.setStyle("-fx-background-color: blue;"); // Miss
-        }
-
-
-
-        // Update the attack board
-        attackBoard.getChildren().remove(cell);
-        attackBoard.add(cell, col, row);
+    public static void updateAttackBoardGridpane(Button cell) {
+        GridPane newAttackBoard = createAttackBoard(null);
     }
 
 
     public static void setPlayerOneBoardAction(EventHandler<ActionEvent> action) {
-        playerOneShipBoard = createBoard(action);
+        playerOneShipBoard = createShipBoard(action);
     }
 
     public static void setPlayerTwoBoardAction(EventHandler<ActionEvent> action) {
-        playerTwoShipBoard = createBoard(action);
+        playerTwoShipBoard = createShipBoard(action);
     }
 
     public static GridPane getPlayerOneBoard() {

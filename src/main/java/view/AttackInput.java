@@ -111,12 +111,13 @@ public class AttackInput {
         attackCount++;
         // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            AttackChecker.updateShipBoard(row, col);
+            AttackChecker.updateShipBoardifHit(row, col);
             cell.setStyle("-fx-background-color: red;");
         } else {
             cell.setStyle("-fx-background-color: blue;");
+            AttackChecker.updateShipBoardifMiss(row, col);
         }
-        BoardView.updateAttackBoard(cell);
+        //BoardView.updateAttackBoard(cell);
         if (attackCount == 3) {
             //close the stage
             Stage currentStage = (Stage) cell.getScene().getWindow();
