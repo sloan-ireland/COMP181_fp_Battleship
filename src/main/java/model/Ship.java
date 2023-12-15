@@ -42,4 +42,8 @@ public abstract class Ship {
     public String getName() {
         return name;
     }
+
+    public int[] getDamageByCell() {
+        return damageByCell;
+    }
 }

@@ -69,14 +69,18 @@ public class MovementInput {
 
         //make sure to set the menu to the left below the vbox
 
-
+        GridPane board;
         if (Game.playerNumber == 1) {
+            board = BoardView.getPlayerOneBoard();
+            BoardView.refreshBoardView(board);
             // Set the ship board to the center
-            root.setCenter(BoardView.getPlayerOneBoard());
+            root.setCenter(board);
         }
         else {
+            board = BoardView.getPlayerTwoBoard();
+            BoardView.refreshBoardView(board);
             // Set the ship board to the center
-            root.setCenter(BoardView.getPlayerTwoBoard());
+            root.setCenter(board);
         }
 
         // Configure the stage
@@ -232,7 +236,7 @@ public class MovementInput {
         confirmButton.setStyle("-fx-font-size: 14; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
         confirmButton.setOnAction(e -> {
             MovementChecker.moveShip(ship, newShipPosition);
-            BoardView.refreshBoardView();
+            //BoardView.refreshBoardView();
             popupWindow.close();
 
             //close the movement window

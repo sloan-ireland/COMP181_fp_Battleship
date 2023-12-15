@@ -4,6 +4,7 @@ import controller.Game;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
@@ -42,9 +43,9 @@ public class BoardView {
                 cell.setPrefSize(30, 30); // Adjust size as needed
                 grid.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
                 cell.setOnAction(cellClickAction);
+
             }
         }
-
         return grid;
     }
 
@@ -106,34 +107,26 @@ public class BoardView {
         return "#808080"; // Default Grey
     }
 
-    public static void refreshBoardView() {
-        // Clear the existing board
-        playerOneShipBoard.getChildren().clear();
-
-        // Rebuild the board with updated ship positions and labels
-        addAxisLabels(playerOneShipBoard);
-        for (int row = 0; row < 10; row++) {
-            for (int col = 0; col < 10; col++) {
-                Button cell = new Button();
-                cell.setPrefSize(30, 30);
-                playerOneShipBoard.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
-
-                Ship occupantShip = PlayerOne.getShipBoard().getShipBoard()[col][row].getOccupantShip();
-                if (occupantShip != null) {
-                    String shipColor = getColorForShip(occupantShip);
-                    cell.setStyle("-fx-background-color: " + shipColor + ";");
-
+    public static void refreshBoardView(GridPane grid) {
+        for (Ship ship : PlayerOne.getShipBoard().getShips()) {
+            int count = 0;
+            for (int[] coord : ship.getCoordinates()) {
+                int x = coord[0];
+                int y = coord[1];
+                // Find the cell in the grid
+                for (Node node : grid.getChildren()) {
+                    if (GridPane.getRowIndex(node) == y + 1 && GridPane.getColumnIndex(node) == x + 1 && node instanceof Button cell) {
+                        //set the color of the cell and make sure it is black color
+                        cell.setText(Integer.toString(ship.getDamageByCell()[count]));
+                        cell.setStyle("-fx-text-fill: black;");
+                        break; // Break the loop once the cell is found and updated
+                    }
                 }
+                count++;
             }
         }
-        //loop through the board and set the text of the button to the corresponding number in the damageByCell array
-        /*Ship[] ships;
-        if (Game.playerNumber == 1) {
-            ships = PlayerOne.getShipBoard().getShips();
-        } else {
-            ships = PlayerTwo.getShipBoard().getShips();
-        }*/
     }
+
 
     private static void addAxisLabels(GridPane grid) {
         // Adding X-axis labels (Column Headers)

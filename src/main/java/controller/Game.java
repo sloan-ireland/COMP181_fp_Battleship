@@ -1,5 +1,9 @@
 package controller;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.stage.Modality;
 import model.*;
 import view.BoardView;
 import view.MovementInput;
@@ -19,7 +23,7 @@ public class Game {
                     "/* Add more styles as needed */";
 
     public static int playerNumber;
-
+    public static boolean shipSunken = false;
     //goes through player 1
     public static void startSetup() {
         playerNumber = 1;
@@ -50,11 +54,41 @@ public class Game {
     public static void nextTurn() {
         if (Game.playerNumber == 1) {
             Game.playerNumber = 2;
+            if (shipSunken) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setTitle("For PlayerTwo: Ship Sunk");
+                alert.setHeaderText("Your opponent sunk your " + AttackChecker.lastSunkShip + "!"
+                        + "ship! It has been removed from the board.");
+                alert.setContentText("It is now your turn.");
+                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                alert.showAndWait();
+                //when ok is clicked, close the popup window
+                if (okButton != null) {
+                    okButton.fire();
+                }
+                shipSunken = false;
+            }
             MovementInput.setupScene();
         }
         else {
             Game.playerNumber = 1;
-            MovementInput.setupScene();
+            if (shipSunken) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.initModality(Modality.APPLICATION_MODAL);
+                alert.setTitle("For PlayerOne: Ship Sunk");
+                alert.setHeaderText("Your opponent sunk your " + AttackChecker.lastSunkShip + "!"
+                        + "ship! It has been removed from the board.");
+                alert.setContentText("It is now your turn.");
+                Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+                alert.showAndWait();
+                //when ok is clicked, close the popup window
+                if (okButton != null) {
+                    okButton.fire();
+                }
+                shipSunken = false;
+            }
+                MovementInput.setupScene();
         }
     }
 
@@ -63,4 +97,38 @@ public class Game {
     }
 
 
+    public static boolean isGameOver() {
+        if (Game.playerNumber == 1) {
+            for (Ship ship : PlayerTwo.getShipBoard().getShips()) {
+                if (ship.getHealth() > 0) {
+                    return false;
+                }
+            }
+        }
+        else {
+            for (Ship ship : PlayerOne.getShipBoard().getShips()) {
+                if (ship.getHealth() > 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void endGame() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initModality(Modality.APPLICATION_MODAL);
+        alert.setTitle("Game Over");
+        alert.setHeaderText("You sunk your opponent's last ship!");
+        alert.setContentText("You won the game!");
+        Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+        alert.showAndWait();
+        //when ok is clicked, close the popup window
+        if (okButton != null) {
+            okButton.fire();
+            //close all windows
+            System.exit(0);
+        }
+
+    }
 }

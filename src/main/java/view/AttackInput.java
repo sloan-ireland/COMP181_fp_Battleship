@@ -111,8 +111,15 @@ public class AttackInput {
         attackCount++;
         // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            AttackChecker.updateShipBoardifHit(row, col);
-            cell.setStyle("-fx-background-color: red;");
+            AttackChecker.applyDamage(row, col, cell);
+            if (AttackChecker.shipIsSunk()) {
+                Game.shipSunken = true;
+                shipSunk();
+            }
+            else {
+                AttackChecker.updateShipBoardifHit(row, col);
+                cell.setStyle("-fx-background-color: red;");
+            }
         } else {
             cell.setStyle("-fx-background-color: blue;");
             AttackChecker.updateShipBoardifMiss(row, col);
@@ -123,6 +130,25 @@ public class AttackInput {
             Stage currentStage = (Stage) cell.getScene().getWindow();
             currentStage.close();
             Game.nextTurn();
+        }
+    }
+
+    private static void shipSunk() {
+        AttackChecker.getSunkShipName();
+        if (!Game.isGameOver()) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Ship Sunk");
+            alert.setHeaderText("You sunk a ship!");
+            alert.setContentText("You sunk your opponent's " + AttackChecker.lastSunkShip + "!");
+            Button okButton = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+            alert.showAndWait();
+            //when ok is clicked, close the popup window
+            if (okButton != null) {
+                okButton.fire();
+            }
+        }
+        else {
+            Game.endGame();
         }
     }
 
