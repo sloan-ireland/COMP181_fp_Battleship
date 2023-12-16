@@ -9,7 +9,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.geometry.Pos;
 import model.*;
-import controller.InitializeGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -231,6 +230,7 @@ public class ShipInput {
                     int row = GridPane.getRowIndex(button)-1;
                     int col = GridPane.getColumnIndex(button)-1;
                     ships[currentShipIndex].getCoordinates().add(new int[]{col, row});
+
                 }
                 shipLabels.get(currentShipIndex).setStyle("-fx-border-color: black; -fx-padding: 5px; -fx-text-fill: grey;");
                 shipLabels.get(currentShipIndex).setDisable(true);

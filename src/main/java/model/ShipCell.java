@@ -4,6 +4,7 @@ public class ShipCell extends Cell {
     private Ship occupantShip;
     private boolean isHit;
 
+    int index;
     public ShipCell(int xCoord, int yCoord) {
         this.xCoord = xCoord;
         this.yCoord = yCoord;
@@ -29,5 +30,13 @@ public class ShipCell extends Cell {
 
     public void setIsHit(boolean isHit) {
         this.isHit = isHit;
+    }
+    
+    public int getindex() {
+        return index;
+    }
+    
+    public void setindex(int index) {
+        this.index = index;
     }
 }

@@ -111,7 +111,7 @@ public class AttackInput {
         attackCount++;
         // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            AttackChecker.applyDamage(row, col, cell);
+            AttackChecker.applyDamage(row, col);
             if (AttackChecker.shipIsSunk()) {
                 Game.shipSunken = true;
                 shipSunk();
@@ -124,7 +124,7 @@ public class AttackInput {
             cell.setStyle("-fx-background-color: blue;");
             AttackChecker.updateShipBoardifMiss(row, col);
         }
-        //BoardView.updateAttackBoard(cell);
+
         if (attackCount == 3) {
             //close the stage
             Stage currentStage = (Stage) cell.getScene().getWindow();
@@ -135,6 +135,13 @@ public class AttackInput {
 
     private static void shipSunk() {
         AttackChecker.getSunkShipName();
+
+        if (Game.playerNumber == 1) {
+            PlayerTwo.getShipBoard().removeShip(AttackChecker.lastSunkShip);
+        }
+        else {
+            PlayerOne.getShipBoard().removeShip(AttackChecker.lastSunkShip);
+        }
         if (!Game.isGameOver()) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Ship Sunk");

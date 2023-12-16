@@ -40,4 +40,7 @@ public class ShipBoard extends Board {
     }
 
 
+    public void removeShip(String ship) {
+
+    }
 }

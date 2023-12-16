@@ -153,8 +153,11 @@ public class BoardView {
             // Cycle through the ships and add them to the board
             for (Ship ship : shipBoard.getShips()) {
                 if (ship.getCoordinates() != null) {
+                    int counter = 0;
                     for (int[] coord : ship.getCoordinates()) {
                         shipBoard.getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                        shipBoard.getShipBoard()[coord[0]][coord[1]].setindex(counter);
+                        counter++;
                     }
                 }
             }
@@ -175,8 +178,11 @@ public class BoardView {
             // Cycle through the ships and add them to the board
             for (Ship ship : shipBoard.getShips()) {
                 if (ship.getCoordinates() != null) {
+                    int counter = 0;
                     for (int[] coord : ship.getCoordinates()) {
                         shipBoard.getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                        shipBoard.getShipBoard()[coord[0]][coord[1]].setindex(counter);
+                        counter++;
                     }
                 }
             }
