@@ -53,14 +53,14 @@ public class MovementInput {
 
         // Create a VBox for the ship selection menu and add the nameLabel to it
         TilePane menu = createShipSelectionMenu();
-        Label instructionsLabel = new Label("Instructions: Click on the button for the ship you want to move, \n" +
-                "then select the direction you want to move it in.\n"
-                + "If the button is disabled, then you cannot move the ship in that direction.\n" +
+        Label instructionsLabel = new Label("Instructions: Click on the button for the ship you want to move," +
+                "then select the direction you want to move it in. If the button is disabled, then you cannot move the ship in that direction. " +
+                "If you see a number on a ship cell, that means that part of the ship has been hit. " +
                 "If you do not want to move a ship, click the \"Progress to Attack Phase\" button.");
 
         instructionsLabel.setWrapText(true); // Enable text wrapping
-        instructionsLabel.setMaxWidth(200); // Set max width for proper wrapping
-        instructionsLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: normal;"); // Styling the instructions label
+        instructionsLabel.setMaxWidth(400); // Set max width for proper wrapping
+        instructionsLabel.setStyle(ShipInput.LABEL_STYLE); // Styling the instructions label
         VBox vbox = new VBox(10); // Use VBox for vertical stacking
         vbox.getChildren().addAll(nameLabel, instructionsLabel, menu);
         vbox.setStyle("-fx-padding: 10px;"); // Add padding to the VBox
@@ -72,14 +72,12 @@ public class MovementInput {
         GridPane board;
         if (Game.playerNumber == 1) {
             board = BoardView.getPlayerOneBoard();
-            GridPane temp = BoardView.getPlayerOneBoard();
             BoardView.refreshBoardView(board, PlayerOne.getShipBoard());
             // Set the ship board to the center
             root.setCenter(board);
         }
         else {
             board = BoardView.getPlayerTwoBoard();
-            GridPane temp = BoardView.getPlayerTwoBoard();
             BoardView.refreshBoardView(board, PlayerTwo.getShipBoard());
             // Set the ship board to the center
             root.setCenter(board);
@@ -151,12 +149,6 @@ public class MovementInput {
             }
 
 
-            // Enable all buttons after the method has finished running
-            carrierButton.setDisable(false);
-            battleshipButton.setDisable(false);
-            cruiserButton.setDisable(false);
-            submarineButton.setDisable(false);
-            destroyerButton.setDisable(false);
         };
 
         // Set the event handler for each button
@@ -166,9 +158,11 @@ public class MovementInput {
         submarineButton.setOnAction(handler);
         destroyerButton.setOnAction(handler);
 
+        //disable all ship buttons once any ship is moved
+
+
         // Add the ship buttons to the TilePane
         menu.getChildren().addAll(carrierButton, battleshipButton, cruiserButton, submarineButton, destroyerButton);
-
         return menu;
     }
 
@@ -240,12 +234,6 @@ public class MovementInput {
             MovementChecker.moveShip(ship, newShipPosition);
             //BoardView.refreshBoardView();
             popupWindow.close();
-
-            //close the movement window
-            stage.close();
-
-            AttackInput.setupAttackScreen();
-            
         });
 
 

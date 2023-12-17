@@ -19,8 +19,7 @@ import java.util.Comparator;
 public class ShipInput {
 
     private static final String COMMON_STYLE = "-fx-border-color: black; -fx-padding: 10px; -fx-border-width: 2; -fx-border-radius: 5;";
-    private static final String LABEL_STYLE = COMMON_STYLE + " -fx-font-size: 14px; -fx-background-color: #f0f0f0; -fx-margin: 10px;";
-    private static final String BUTTON_STYLE = COMMON_STYLE + " -fx-font-size: 12px; -fx-background-color: #e7e7e7;";
+    public static final String LABEL_STYLE = COMMON_STYLE + " -fx-font-size: 14px; -fx-background-color: #f0f0f0; -fx-margin: 10px;";
     private static final String SELECTED_BUTTON_STYLE = "-fx-background-color: grey;";
     private static final String SUBMIT_BUTTON_STYLE = COMMON_STYLE + " -fx-font-size: 14px; -fx-background-color: #add8e6;";
 
@@ -153,7 +152,8 @@ public class ShipInput {
                     } else {
                         // Reset if cells are not in line
                         for (Button button : selectedButtons) {
-                            button.setStyle(BUTTON_STYLE);
+                            //set to original color
+                            button.setStyle("");
                         }
                         selectedButtons.clear();
                         Alert errorAlert = new Alert(Alert.AlertType.ERROR);

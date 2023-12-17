@@ -242,4 +242,15 @@ public class BoardView {
     }
 
 
+    public static void disablePlayerOneAttackBoard() {
+        for (Node node : playerOneAttackBoard.getChildren()) {
+            node.setDisable(true);
+        }
+    }
+
+    public static void disablePlayerTwoAttackBoard() {
+        for (Node node : playerTwoAttackBoard.getChildren()) {
+            node.setDisable(true);
+        }
+    }
 }

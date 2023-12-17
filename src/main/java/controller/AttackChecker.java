@@ -1,13 +1,9 @@
 package controller;
 
-import javafx.scene.control.Button;
-import javafx.scene.layout.GridPane;
+
 import model.PlayerOne;
 import model.PlayerTwo;
 import model.Ship;
-import view.BoardView;
-
-import static java.lang.Integer.parseInt;
 
 public class AttackChecker {
     public static String lastSunkShip;
@@ -59,48 +55,35 @@ public class AttackChecker {
             int damage = PlayerTwo.getShipBoard().getShip(shipName).getDamageByCell()[index];
             int newHealth = PlayerTwo.getShipBoard().getShip(shipName).getHealth() - damage;
             PlayerTwo.getShipBoard().getShip(shipName).setHealth(newHealth);
-            System.out.println("PlayerTwo's " + shipName + " has " + newHealth + " health left.");
+            //System.out.println("PlayerTwo's " + shipName + " has " + newHealth + " health left.");
 
         } else {
             index = PlayerOne.getShipBoard().getShipBoard()[row][col].getindex();
             String shipName = PlayerOne.getShipBoard().getShipBoard()[row][col].getOccupantShip().getName();
             int newHealth = PlayerOne.getShipBoard().getShip(shipName).getHealth() - PlayerOne.getShipBoard().getShip(shipName).getDamageByCell()[index];
             PlayerOne.getShipBoard().getShip(shipName).setHealth(newHealth);
-            System.out.println("PlayerOne's " + shipName + " has " + newHealth + " health left.");
+            //System.out.println("PlayerOne's " + shipName + " has " + newHealth + " health left.");
         }
     }
 
-    public static boolean shipIsSunk() {
+    public static boolean shipIsSunk(int row, int col) {
         if (Game.playerNumber == 1) {
-            for (Ship ship : PlayerTwo.getShipBoard().getShips()) {
-                if (ship.getHealth() < 0) {
-                    //set isSunk to true
-                    ship.setIsSunk(true);
-                    return true;
-                }
-            }
+            return PlayerTwo.getShipBoard().getShipBoard()[row][col].getOccupantShip().getHealth() <= 0;
         } else {
-            for (Ship ship : PlayerOne.getShipBoard().getShips()) {
-                if (ship.getHealth() < 0) {
-                    //set isSunk to true
-                    ship.setIsSunk(true);
-                    return true;
-                }
-            }
+            return PlayerOne.getShipBoard().getShipBoard()[row][col].getOccupantShip().getHealth() <= 0;
         }
-        return false;
     }
 
     public static void getSunkShipName() {
         if (Game.playerNumber == 1) {
             for (Ship ship : PlayerTwo.getShipBoard().getShips()) {
-                if (ship.getHealth() == 0) {
+                if (ship.getHealth() <= 0) {
                     lastSunkShip = ship.getName();
                 }
             }
         } else {
             for (Ship ship : PlayerOne.getShipBoard().getShips()) {
-                if (ship.getHealth() == 0) {
+                if (ship.getHealth() <= 0) {
                     lastSunkShip = ship.getName();
                 }
             }
@@ -112,6 +95,18 @@ public class AttackChecker {
             return PlayerTwo.getShipBoard().getShipBoard()[row][col].getIsHit();
         } else {
             return PlayerOne.getShipBoard().getShipBoard()[row][col].getIsHit();
+        }
+    }
+
+    public static void applySunkShipColor(int row, int col) {
+        if (Game.playerNumber == 1) {
+            for (int[] coord : PlayerTwo.getShipBoard().getShipBoard()[row][col].getOccupantShip().getCoordinates()) {
+                PlayerTwo.getAttackBoard().getAttackBoard()[coord[0]][coord[1]].setColorOfCell("black");
+            }
+        } else {
+            for (int[] coord : PlayerOne.getShipBoard().getShipBoard()[row][col].getOccupantShip().getCoordinates()) {
+                PlayerOne.getAttackBoard().getAttackBoard()[coord[0]][coord[1]].setColorOfCell("black");
+            }
         }
     }
 }

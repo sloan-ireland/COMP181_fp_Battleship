@@ -80,26 +80,36 @@ public class MovementChecker {
 
     //update the shipboard with the new coordinates of the ship
     public static void moveShip(Ship ship, ArrayList<int[]> newShipPosition) {
-        //remove the ship from the old coordinates anc
-        for (int[] coord : ship.getCoordinates()) {
-            if (Game.playerNumber == 1) {
-                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
-            }
-            else {
-                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
-            }
-        }
-        //add the ship to the new coordinates
-        //also transfer the ship's index to the new coordinates
-        //
+        int counter = 0;
+        //transfer index
         for (int[] coord : newShipPosition) {
             if (Game.playerNumber == 1) {
                 PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setIsHit(PlayerOne.getShipBoard().getShipBoard()[ship.getCoordinates().get(counter)[0]][ship.getCoordinates().get(counter)[1]].getIsHit());
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setindex(PlayerOne.getShipBoard().getShipBoard()[ship.getCoordinates().get(counter)[0]][ship.getCoordinates().get(counter)[1]].getindex());
+
             }
             else {
                 PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(ship);
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setIsHit(PlayerTwo.getShipBoard().getShipBoard()[ship.getCoordinates().get(counter)[0]][ship.getCoordinates().get(counter)[1]].getIsHit());
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setindex(PlayerTwo.getShipBoard().getShipBoard()[ship.getCoordinates().get(counter)[0]][ship.getCoordinates().get(counter)[1]].getindex());
+            }
+            counter++;
+        }
+        //remove the ship from the old coordinates anc
+        //reset isHit to false for all cells in the ship
+        for (int[] coord : ship.getCoordinates()) {
+            if (Game.playerNumber == 1) {
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
+                PlayerOne.getShipBoard().getShipBoard()[coord[0]][coord[1]].setIsHit(false);
+            }
+            else {
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setOccupantShip(null);
+                PlayerTwo.getShipBoard().getShipBoard()[coord[0]][coord[1]].setIsHit(false);
             }
         }
+        //add the ship to the new coordinates
+
         //update the ship's coordinates
         ship.setCoordinates(newShipPosition);
     }

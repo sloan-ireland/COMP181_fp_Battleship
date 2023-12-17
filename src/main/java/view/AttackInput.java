@@ -4,9 +4,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
@@ -14,7 +12,6 @@ import javafx.stage.Stage;
 import model.AttackCell;
 import controller.Game;
 import controller.AttackChecker;
-import javafx.scene.control.Alert;
 import model.PlayerOne;
 import model.PlayerTwo;
 
@@ -22,6 +19,7 @@ import java.util.Optional;
 
 public class AttackInput {
     private static int attackCount = 0;
+    private static final String INSTRUCTION_LABEL_STYLE = "-fx-font-size: 14px; -fx-background-color: #f0f0f0; -fx-padding: 10px; -fx-border-color: black; -fx-border-width: 2; -fx-border-radius: 5;";
     public static void setupAttackScreen() {
         Stage stage = new Stage();
         BorderPane root = new BorderPane();
@@ -54,6 +52,19 @@ public class AttackInput {
         shipBoardLabel.setAlignment(Pos.CENTER);
         BorderPane.setAlignment(shipBoardLabel, Pos.CENTER);
         root.setTop(shipBoardLabel);
+
+        // Instructions label
+        Label instructionsLabel = new Label("Select a cell to attack or view its history.\n" +
+                "You have three attacks.\n"+
+                "Click the \"End Turn Now\" button when you are done attacking.\n"+
+                "Hitting the same part of a ship \nwill not cause additional damage.\n" +
+                        "Careful, your opponent can move their \nships between your attacks!");
+        instructionsLabel.setStyle(INSTRUCTION_LABEL_STYLE);
+        instructionsLabel.setWrapText(true); // Enable text wrapping
+        instructionsLabel.setMaxWidth(300);
+        instructionsLabel.setAlignment(Pos.CENTER);
+        root.setLeft(instructionsLabel);
+        BorderPane.setMargin(instructionsLabel, new Insets(10, 10, 10, 10));
 
         // Determine which player's attack board to display based on the current turn
         GridPane attackBoard;
@@ -97,17 +108,27 @@ public class AttackInput {
         confirmAlert.setContentText("Do you want to attack cell(" + row + ", " + col + ") or see the attack history?");
         ButtonType attackButton = new ButtonType("Attack");
         ButtonType historyButton = new ButtonType("History");
+        ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
 
         //add the buttons to the alert
-        confirmAlert.getButtonTypes().setAll(attackButton, historyButton);
+        confirmAlert.getButtonTypes().setAll(attackButton, historyButton, cancelButton);
 
         //get the result of the alert
         Optional<ButtonType> result = confirmAlert.showAndWait();
 
+        //if the user clicks attack, return false
         if (result.isPresent() && result.get() == attackButton) {
             return false;
         }
-        else return result.isPresent() && result.get() == historyButton;
+        //if the user clicks history, return true
+        else if (result.isPresent() && result.get() == historyButton) {
+            return true;
+        }
+        //if the user clicks cancel, close the alert and return false
+        else {
+            confirmAlert.close();
+            return false;
+        }
     }
 
     private static boolean confirmAttack(int row, int col) {
@@ -125,11 +146,22 @@ public class AttackInput {
         attackCount++;
         // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            //only apply damage if that cell has not been hit before]
+            //only apply damage if that cell has not been hit before
             if (!AttackChecker.checkIfCellHit(row, col)) {
                 AttackChecker.applyDamage(row, col);
             }
-            if (AttackChecker.shipIsSunk()) {
+            if (AttackChecker.shipIsSunk(row,col)) {
+                if (Game.playerNumber == 1) {
+                    PlayerOne.getAttackBoard().getAttackBoard()[row][col].setShipSunk(true);
+                    PlayerTwo.getShipBoard().getShipBoard()[row][col].getOccupantShip().setIsSunk(true);
+                }
+                else {
+                    PlayerTwo.getAttackBoard().getAttackBoard()[row][col].setShipSunk(true);
+                    PlayerOne.getShipBoard().getShipBoard()[row][col].getOccupantShip().setIsSunk(true);
+                }
+                cell.setStyle("-fx-background-color: red;");
+                //set all the cells of sunk ship to black
+                AttackChecker.applySunkShipColor(row, col);
                 Game.shipSunken = true;
                 shipSunk();
             }
@@ -143,16 +175,20 @@ public class AttackInput {
         }
 
         if (attackCount == 3) {
-            //close the stage
-            Stage currentStage = (Stage) cell.getScene().getWindow();
-            currentStage.close();
-            Game.nextTurn();
+            //disable the attack board in this class
+            if (Game.playerNumber == 1) {
+                BoardView.disablePlayerOneAttackBoard();
+            }
+            else {
+                BoardView.disablePlayerTwoAttackBoard();
+            }
+
         }
     }
 
     private static void shipSunk() {
         AttackChecker.getSunkShipName();
-
+        //set isSunk to true for the ship and occupantShip of the cell
         if (Game.playerNumber == 1) {
             PlayerTwo.getShipBoard().removeShip(AttackChecker.lastSunkShip);
         }
