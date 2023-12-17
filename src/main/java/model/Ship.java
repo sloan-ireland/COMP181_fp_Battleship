@@ -46,4 +46,13 @@ public abstract class Ship {
     public int[] getDamageByCell() {
         return damageByCell;
     }
+
+
+    public void setIsSunk(boolean isSunk) {
+        this.isSunk = isSunk;
+    }
+
+    public boolean getIsSunk() {
+        return isSunk;
+    }
 }

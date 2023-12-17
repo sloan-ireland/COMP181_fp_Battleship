@@ -1,12 +1,14 @@
 package view;
 
 import controller.Game;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import model.*;
 
@@ -14,8 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Comparator;
 
-
 public class ShipInput {
+
+    private static final String COMMON_STYLE = "-fx-border-color: black; -fx-padding: 10px; -fx-border-width: 2; -fx-border-radius: 5;";
+    private static final String LABEL_STYLE = COMMON_STYLE + " -fx-font-size: 14px; -fx-background-color: #f0f0f0; -fx-margin: 10px;";
+    private static final String BUTTON_STYLE = COMMON_STYLE + " -fx-font-size: 12px; -fx-background-color: #e7e7e7;";
+    private static final String SELECTED_BUTTON_STYLE = "-fx-background-color: grey;";
+    private static final String SUBMIT_BUTTON_STYLE = COMMON_STYLE + " -fx-font-size: 14px; -fx-background-color: #add8e6;";
 
     private static VBox shipList;
     public static Ship[] ships;
@@ -25,15 +32,12 @@ public class ShipInput {
     private static List<Button> selectedButtons = new ArrayList<>();
     private static List<Label> shipLabels = new ArrayList<>();
     private static boolean isPlacingShip = false;
-    
-    
 
     public static void displaySetupWindow() {
         Stage setupStage = new Stage();
         if (Game.playerNumber == 1) {
             setupStage.setTitle("Player 1: Name Input");
-        }
-        else {
+        } else {
             resetClass();
             setupStage.setTitle("Player 2: Name Input");
         }
@@ -42,7 +46,9 @@ public class ShipInput {
         BorderPane nameInputLayout = new BorderPane();
         TextField playerNameField = new TextField();
         playerNameField.setPromptText("Enter your name");
+        playerNameField.setStyle(LABEL_STYLE);
         Button submitButton = new Button("Submit");
+        submitButton.setStyle(SUBMIT_BUTTON_STYLE);
         VBox inputBox = new VBox(10, playerNameField, submitButton);
         inputBox.setAlignment(Pos.CENTER);
         nameInputLayout.setCenter(inputBox);
@@ -65,8 +71,7 @@ public class ShipInput {
         Stage boardStage = new Stage();
         if (Game.playerNumber == 1) {
             boardStage.setTitle("Player 1: Ship Setup");
-        }
-        else {
+        } else {
             boardStage.setTitle("Player 2: Ship Setup");
         }
 
@@ -74,59 +79,41 @@ public class ShipInput {
         BorderPane root = new BorderPane();
 
         // Stage 2: Display Player Name and Board
-        Label playerNameLabel;
-        if (Game.playerNumber == 1) {
-            playerNameLabel = new Label("Player 1: " + playerName);
-        }
-        else {
-            playerNameLabel = new Label("Player 2: " + playerName);
-        }
-        playerNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: normal;");
+        Label playerNameLabel = new Label("Player " + Game.playerNumber + ": " + playerName);
+        playerNameLabel.setStyle(LABEL_STYLE);
         if (Game.playerNumber == 1) {
             PlayerOne.setName(playerName);
-        }
-        else {
+        } else {
             PlayerTwo.setName(playerName);
         }
         root.setTop(playerNameLabel);
 
         shipList = new VBox(10);
         shipList.setAlignment(Pos.CENTER);
+        shipList.setStyle("-fx-background-color: #f4f4f4; -fx-padding: 15px;");
         root.setLeft(shipList);
 
         Label instructionLabel = new Label("Click on a ship to place it:\nOnce selected, click on the board to place the ship\nYou must place that ship before you can move on.");
+        instructionLabel.setStyle(LABEL_STYLE);
         shipList.getChildren().add(instructionLabel);
 
         ships = new Ship[]{new model.Carrier(), new model.Battleship(), new model.Cruiser(), new model.Submarine(), new model.Destroyer()};
         for (Ship ship : ships) {
             Label shipLabel = new Label(ship.getName() + " (Length: " + ship.getLength() + ")");
-            shipLabel.setStyle("-fx-border-color: black; -fx-padding: 5px;");
+            shipLabel.setStyle(LABEL_STYLE);
             shipLabel.setOnMouseClicked(e -> selectShipForPlacement(ship, shipLabel));
             shipList.getChildren().add(shipLabel);
             shipLabels.add(shipLabel);
         }
 
-
+        // Set up the board based on the player number
         if (Game.playerNumber == 1) {
-            BoardView.setPlayerOneBoardAction(e -> {
-                int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
-                int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
-                handleCellClick(row, col, (Button) e.getSource());
-            });
+            BoardView.setPlayerOneBoardAction(e -> handleCellClick(e));
             root.setCenter(BoardView.getPlayerOneBoard());
-        }
-        else {
-            BoardView.setPlayerTwoBoardAction(e -> {
-                int row = GridPane.getRowIndex((Button) e.getSource()) - 1;
-                int col = GridPane.getColumnIndex((Button) e.getSource()) - 1;
-                handleCellClick(row, col, (Button) e.getSource());
-            });
+        } else {
+            BoardView.setPlayerTwoBoardAction(e -> handleCellClick(e));
             root.setCenter(BoardView.getPlayerTwoBoard());
         }
-        
-
-
-
 
         Scene scene = new Scene(root, 800, 600);
         boardStage.setScene(scene);
@@ -137,11 +124,18 @@ public class ShipInput {
         if (!isPlacingShip) {
             currentShipIndex = java.util.Arrays.asList(ships).indexOf(ship);
             for (Label label : shipLabels) {
-                label.setStyle("-fx-border-color: black; -fx-padding: 5px;");
+                label.setStyle(LABEL_STYLE);
             }
-            shipLabel.setStyle("-fx-border-color: black; -fx-padding: 5px; -fx-font-weight: bold;");
+            shipLabel.setStyle(LABEL_STYLE + " -fx-font-weight: bold; -fx-background-color: #d3d3d3;");
             isPlacingShip = true;
         }
+    }
+
+    private static void handleCellClick(ActionEvent e) {
+        Button cell = (Button) e.getSource();
+        int row = GridPane.getRowIndex(cell) - 1;
+        int col = GridPane.getColumnIndex(cell) - 1;
+        handleCellClick(row, col, cell);
     }
 
     private static void handleCellClick(int row, int col, Button cell) {
@@ -150,7 +144,7 @@ public class ShipInput {
             // Add cell to selected cells if it's not already selected
             if (!selectedButtons.contains(cell)) {
                 selectedButtons.add(cell);
-                cell.setStyle("-fx-background-color: grey;"); // Temporary color for selection
+                cell.setStyle(SELECTED_BUTTON_STYLE); // Temporary color for selection
 
                 // Check if the selected cells match the ship's length
                 if (selectedButtons.size() == currentShip.getLength()) {
@@ -159,7 +153,7 @@ public class ShipInput {
                     } else {
                         // Reset if cells are not in line
                         for (Button button : selectedButtons) {
-                            button.setStyle("");
+                            button.setStyle(BUTTON_STYLE);
                         }
                         selectedButtons.clear();
                         Alert errorAlert = new Alert(Alert.AlertType.ERROR);

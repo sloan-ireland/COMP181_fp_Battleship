@@ -72,13 +72,15 @@ public class MovementInput {
         GridPane board;
         if (Game.playerNumber == 1) {
             board = BoardView.getPlayerOneBoard();
-            BoardView.refreshBoardView(board);
+            GridPane temp = BoardView.getPlayerOneBoard();
+            BoardView.refreshBoardView(board, PlayerOne.getShipBoard());
             // Set the ship board to the center
             root.setCenter(board);
         }
         else {
             board = BoardView.getPlayerTwoBoard();
-            BoardView.refreshBoardView(board);
+            GridPane temp = BoardView.getPlayerTwoBoard();
+            BoardView.refreshBoardView(board, PlayerTwo.getShipBoard());
             // Set the ship board to the center
             root.setCenter(board);
         }

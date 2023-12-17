@@ -1,6 +1,7 @@
 package view;
 
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -66,6 +67,19 @@ public class AttackInput {
             attackBoard = BoardView.getPlayerTwoAttackBoard();
         }
         root.setCenter(attackBoard);
+
+        Button endTurn = new Button("End Turn Now");
+        root.setBottom(endTurn);
+        BorderPane.setAlignment(endTurn, Pos.CENTER);
+        BorderPane.setMargin(endTurn, new Insets(10, 10, 10, 10));
+        endTurn.setStyle("-fx-font-size: 14px; -fx-base: #4CAF50; -fx-text-fill: white; -fx-padding: 10px;");
+        endTurn.setOnAction(event -> {
+            //close the stage
+            Stage currentStage = (Stage) endTurn.getScene().getWindow();
+            currentStage.close();
+            Game.nextTurn();
+        });
+
         Game.applyCommonStyles(scene);
         stage.setScene(scene);
         stage.setTitle("Player " + Game.playerNumber + ": Attack Phase");
@@ -111,7 +125,10 @@ public class AttackInput {
         attackCount++;
         // Perform the attack logic
         if (AttackChecker.checkAttack(row, col)) {
-            AttackChecker.applyDamage(row, col);
+            //only apply damage if that cell has not been hit before]
+            if (!AttackChecker.checkIfCellHit(row, col)) {
+                AttackChecker.applyDamage(row, col);
+            }
             if (AttackChecker.shipIsSunk()) {
                 Game.shipSunken = true;
                 shipSunk();

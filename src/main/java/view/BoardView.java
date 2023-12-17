@@ -107,22 +107,34 @@ public class BoardView {
         return "#808080"; // Default Grey
     }
 
-    public static void refreshBoardView(GridPane grid) {
-        for (Ship ship : PlayerOne.getShipBoard().getShips()) {
-            int count = 0;
-            for (int[] coord : ship.getCoordinates()) {
-                int x = coord[0];
-                int y = coord[1];
-                // Find the cell in the grid
-                for (Node node : grid.getChildren()) {
-                    if (GridPane.getRowIndex(node) == y + 1 && GridPane.getColumnIndex(node) == x + 1 && node instanceof Button cell) {
-                        //set the color of the cell and make sure it is black color
-                        cell.setText(Integer.toString(ship.getDamageByCell()[count]));
-                        cell.setStyle("-fx-text-fill: black;");
-                        break; // Break the loop once the cell is found and updated
+    public static void refreshBoardView(GridPane grid, ShipBoard shipBoard) {
+        // Clear the existing board
+        grid.getChildren().clear();
+
+        // Rebuild the board with updated ship positions and labels
+        addAxisLabels(grid);
+
+        // Iterate through each cell on the board
+        for (int row = 0; row < 10; row++) {
+            for (int col = 0; col < 10; col++) {
+                Button cell = new Button();
+                cell.setPrefSize(30, 30);
+                grid.add(cell, col + 1, row + 1); // Offset by 1 due to axis labels
+
+                ShipCell shipCell = shipBoard.getShipBoard()[col][row];
+                Ship occupantShip = shipCell.getOccupantShip();
+
+                // Check if a ship occupies the cell
+                if (occupantShip != null && !occupantShip.getIsSunk()) {
+                    String shipColor = getColorForShip(occupantShip);
+                    cell.setStyle("-fx-background-color: " + shipColor + "; -fx-text-fill: black;");
+
+                    // Display damage if the cell has been hit
+                    if (shipCell.getIsHit()) {
+                        int index = shipCell.getindex();
+                        cell.setText(Integer.toString(occupantShip.getDamageByCell()[index]));
                     }
                 }
-                count++;
             }
         }
     }

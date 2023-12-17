@@ -55,32 +55,35 @@ public class AttackChecker {
         int index;
         if (Game.playerNumber == 1) {
             index = PlayerTwo.getShipBoard().getShipBoard()[row][col].getindex();
-            System.out.println("index: " + index);
             String shipName = PlayerTwo.getShipBoard().getShipBoard()[row][col].getOccupantShip().getName();
             int damage = PlayerTwo.getShipBoard().getShip(shipName).getDamageByCell()[index];
-            System.out.println("damage: " + damage);
             int newHealth = PlayerTwo.getShipBoard().getShip(shipName).getHealth() - damage;
             PlayerTwo.getShipBoard().getShip(shipName).setHealth(newHealth);
-
+            System.out.println("PlayerTwo's " + shipName + " has " + newHealth + " health left.");
 
         } else {
             index = PlayerOne.getShipBoard().getShipBoard()[row][col].getindex();
             String shipName = PlayerOne.getShipBoard().getShipBoard()[row][col].getOccupantShip().getName();
             int newHealth = PlayerOne.getShipBoard().getShip(shipName).getHealth() - PlayerOne.getShipBoard().getShip(shipName).getDamageByCell()[index];
             PlayerOne.getShipBoard().getShip(shipName).setHealth(newHealth);
+            System.out.println("PlayerOne's " + shipName + " has " + newHealth + " health left.");
         }
     }
 
     public static boolean shipIsSunk() {
         if (Game.playerNumber == 1) {
             for (Ship ship : PlayerTwo.getShipBoard().getShips()) {
-                if (ship.getHealth() == 0) {
+                if (ship.getHealth() < 0) {
+                    //set isSunk to true
+                    ship.setIsSunk(true);
                     return true;
                 }
             }
         } else {
             for (Ship ship : PlayerOne.getShipBoard().getShips()) {
-                if (ship.getHealth() == 0) {
+                if (ship.getHealth() < 0) {
+                    //set isSunk to true
+                    ship.setIsSunk(true);
                     return true;
                 }
             }
@@ -101,6 +104,14 @@ public class AttackChecker {
                     lastSunkShip = ship.getName();
                 }
             }
+        }
+    }
+
+    public static boolean checkIfCellHit(int row, int col) {
+        if (Game.playerNumber == 1) {
+            return PlayerTwo.getShipBoard().getShipBoard()[row][col].getIsHit();
+        } else {
+            return PlayerOne.getShipBoard().getShipBoard()[row][col].getIsHit();
         }
     }
 }
