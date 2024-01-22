@@ -33,6 +33,7 @@ public class ShipInput {
     private static boolean isPlacingShip = false;
 
     public static void displaySetupWindow() {
+
         Stage setupStage = new Stage();
         if (Game.playerNumber == 1) {
             setupStage.setTitle("Player 1: Name Input");

@@ -15,6 +15,9 @@ import javafx.stage.Stage;
 import model.PlayerOne;
 import model.PlayerTwo;
 import model.Ship;
+
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import javafx.event.ActionEvent;
@@ -24,6 +27,7 @@ import view.AttackInput;
 
 public class MovementInput {
     public static Stage stage;
+//list out every class in the project
 
     public static void setupScene() {
         if (Game.playerNumber == 2) {
@@ -148,6 +152,12 @@ public class MovementInput {
                 selectDirection(PlayerTwo.getShipBoard().getShip(shipName));
             }
 
+            carrierButton.setDisable(false);
+            battleshipButton.setDisable(false);
+            cruiserButton.setDisable(false);
+            submarineButton.setDisable(false);
+            destroyerButton.setDisable(false);
+
 
         };
 
@@ -234,6 +244,10 @@ public class MovementInput {
             MovementChecker.moveShip(ship, newShipPosition);
             //BoardView.refreshBoardView();
             popupWindow.close();
+            //close the current window and open the attack window
+            stage.close();
+            AttackInput.setupAttackScreen();
+
         });
 
 

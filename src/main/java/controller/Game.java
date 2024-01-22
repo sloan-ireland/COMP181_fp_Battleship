@@ -8,7 +8,6 @@ import model.*;
 import view.BoardView;
 import view.MovementInput;
 import view.ShipInput;
-import java.net.URL;
 
 
 

@@ -54,11 +54,12 @@ public class AttackInput {
         root.setTop(shipBoardLabel);
 
         // Instructions label
-        Label instructionsLabel = new Label("Select a cell to attack or view its history.\n" +
-                "You have three attacks.\n"+
-                "Click the \"End Turn Now\" button when you are done attacking.\n"+
-                "Hitting the same part of a ship \nwill not cause additional damage.\n" +
-                        "Careful, your opponent can move their \nships between your attacks!");
+        Label instructionsLabel = new Label("Select a cell to attack or view its history." +
+                "You have three attacks."+
+                "Red cells indicate a hit, blue cells indicate a miss." +
+                "Click the \"End Turn Now\" button when you are done attacking."+
+                "Hitting the same part of a ship will not cause additional damage." +
+                        "Careful, your opponent can move their ships between your attacks!");
         instructionsLabel.setStyle(INSTRUCTION_LABEL_STYLE);
         instructionsLabel.setWrapText(true); // Enable text wrapping
         instructionsLabel.setMaxWidth(300);
